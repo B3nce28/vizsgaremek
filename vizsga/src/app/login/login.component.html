@@ -1,19 +1,25 @@
-<h2 class="login-title">Bejelentkezés</h2>
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-  <div class="form-group">
-    <label for="email" class="form-label">Email cím</label>
-    <input type="email" id="email" formControlName="email" class="form-input">
-    <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="form-error">
-      <div *ngIf="loginForm.get('email')?.errors?.['required']">Az e-mail cím kötelező</div>
-      <div *ngIf="loginForm.get('email')?.errors?.['email']">Az e-mail cím nem megfelelő formátumú</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="text-center">
+          <h1>Login</h1>
+          <h6>Please enter & password I</h6>
+        </div>
+          <form [formGroup]="loginForm" (ngSubmit)="login()">
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Login</button>
+          </form>
+          <a style="color:#fff; margin-top: 10px;" routerLink="/signup">Új felhasználó Vagy? kattincs ide!!</a>
+      </div>
     </div>
   </div>
-  <div class="form-group">
-    <label for="password" class="form-label">Jelszó</label>
-    <input type="password" id="password" formControlName="password" class="form-input">
-    <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="form-error">
-      <div *ngIf="loginForm.get('password')?.errors?.['required']">A jelszó kötelező</div>
-    </div>
-  </div>
-  <button id="login-button" type="submit" [disabled]="loginForm.invalid" class="form-submit-btn">Bejelentkezés</button>
-</form>
+</div>
