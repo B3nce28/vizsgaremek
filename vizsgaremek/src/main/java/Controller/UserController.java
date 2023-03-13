@@ -69,4 +69,17 @@ public class UserController {
     List<User> result = User.get();
     return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
+    
+    @POST
+    @Path("login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean login(User user) {
+    boolean result = User.login(user.getUsername(), user.getPassword());
+    if (result) {
+        return true;
+    } else {
+        return false;
+        
+    }
+    }
 }

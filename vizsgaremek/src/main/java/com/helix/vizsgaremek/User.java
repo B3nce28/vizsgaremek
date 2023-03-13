@@ -21,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,6 +29,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+
 
 /**
  *
@@ -49,6 +51,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static boolean authenticate(String username, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -223,6 +229,7 @@ public class User implements Serializable {
             spq.registerStoredProcedureParameter("username_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("password_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("phone_number_in", String.class, ParameterMode.IN);
+            
                
             spq.setParameter("first_name_in", u.getFirstName());
             spq.setParameter("last_name_in", u.getLastName());
@@ -287,6 +294,38 @@ public class User implements Serializable {
             em.close();
             emf.close();
         }
+    } 
+    
+   public static Boolean login(String username, String password) {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+    EntityManager em = emf.createEntityManager();
+    try {
+        StoredProcedureQuery spq = em.createStoredProcedureQuery("login");
+        spq.registerStoredProcedureParameter("username_in", String.class, ParameterMode.IN);
+        spq.registerStoredProcedureParameter("password_in", String.class, ParameterMode.IN);
+        spq.registerStoredProcedureParameter("result_out", Integer.class, ParameterMode.OUT);
+        spq.setParameter("username_in", username);
+        spq.setParameter("password_in", password);
+        spq.execute();
+        int result = (int) spq.getOutputParameterValue("result_out");
+        if (result == 1) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+    catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return false;
     }
     
+    finally {
+        em.clear();
+        em.close();
+        emf.close();
+    }
+   }
+        
+   
 }
