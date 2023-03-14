@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Már 13. 21:02
+-- Létrehozás ideje: 2023. Már 14. 08:04
 -- Kiszolgáló verziója: 10.4.24-MariaDB
 -- PHP verzió: 8.1.6
 
@@ -66,15 +66,15 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT * FROM ani
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_user` ()   SELECT * FROM user$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200))   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), OUT `result_out` BOOLEAN)   BEGIN
     DECLARE user_id INT;
     
     SELECT user.id INTO user_id FROM user WHERE user.username = username_in AND user.password = password_in LIMIT 1;
     
     IF user_id IS NOT NULL THEN
-        SELECT 'Sikeres bejelentkezés' AS result;
+        SET result_out = true;
     ELSE
-        SELECT 'Hibás adatok' AS result;
+        SET result_out = false;
     END IF;
 END$$
 
