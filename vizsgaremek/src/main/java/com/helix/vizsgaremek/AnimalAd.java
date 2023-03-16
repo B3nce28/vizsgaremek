@@ -4,6 +4,7 @@
  */
 package com.helix.vizsgaremek;
 
+import Configuration.Database;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -11,6 +12,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +23,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.ParameterMode;
+import javax.persistence.Persistence;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -213,4 +219,71 @@ public class AnimalAd implements Serializable {
         return "com.helix.vizsgaremek.AnimalAd[ id=" + id + " ]";
     }
     
+        public static String create_new_ad(AnimalAd a){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("create_new_ad");
+            
+            spq.registerStoredProcedureParameter("user_id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("species_of_animal_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("title_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("description_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("date_in", Date.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("lost_or_fund_in", String.class, ParameterMode.IN);
+                           
+            spq.setParameter("user_id_in", a.getUserId());
+            spq.setParameter("species_of_animal_in", a.getSpeciesOfAnimal());
+            spq.setParameter("title_in", a.getTitle());
+            spq.setParameter("description_in", a.getDescription());
+            spq.setParameter("date_in", a.getDate());
+            spq.setParameter("lost_or_fund_in", a.getLostOrFund());
+            
+            spq.execute();
+            return "Új hírdetés sikeresen létre lett hozva!";
+        }
+        catch(Exception ex){
+            //Handle database exceptions
+            if(ex.getMessage().equals("org.hibernate.exception.ConstraintViolationException: Error calling CallableStatement.getMoreResults")){
+                return "Some unique value is duplicate!";
+            }
+            return "Hiba";
+        }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }                
+    }
+    
+        
+        public static String delete_ad(Integer id){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("delete_ad");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+              
+            spq.setParameter("id_in", id);
+            
+            spq.execute();
+            return "A hírdetés törlésre került!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
+    }
 }

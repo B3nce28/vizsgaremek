@@ -138,4 +138,6 @@ public class Address implements Serializable {
         return "com.helix.vizsgaremek.Address[ id=" + id + " ]";
     }
     
+    
+    
 }

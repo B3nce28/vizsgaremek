@@ -10,6 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -81,5 +82,21 @@ public class UserController {
         return false;
         
     }
+    }
+    
+    @DELETE
+    @Path("delete_user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response delete_user(User user){
+        String result = User.delete_user(user.getId());
+        return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
+    }
+    
+    @POST
+    @Path("update_user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response update_user(User user){
+        String result = User.update_user(user);
+        return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
 }

@@ -229,11 +229,10 @@ public class User implements Serializable {
             spq.registerStoredProcedureParameter("username_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("password_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("phone_number_in", String.class, ParameterMode.IN);
-            
-               
+                           
             spq.setParameter("first_name_in", u.getFirstName());
             spq.setParameter("last_name_in", u.getLastName());
-            spq.setParameter("email_in", u.getLastName());
+            spq.setParameter("email_in", u.getEmail());
             spq.setParameter("username_in", u.getUsername());
             spq.setParameter("password_in", u.getPassword());
             spq.setParameter("phone_number_in", u.getPhoneNumber());
@@ -275,13 +274,10 @@ public class User implements Serializable {
                 String username = rekord[4].toString();
                 String password = rekord[5].toString();
                 String phoneNumber = rekord[6].toString();
-                
-                
+                                
                 User u = new User(id,firstName,lastName,email,username,password,phoneNumber, null);
                 users.add(u);
             }
-
-
 
             return users;
         }
@@ -326,6 +322,66 @@ public class User implements Serializable {
         emf.close();
     }
    }
-        
    
+   public static String delete_user(Integer id){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("delete_user");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+              
+            spq.setParameter("id_in", id);
+            
+            spq.execute();
+            return "A felhasználó törlésre került!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
+    }
+   
+       public static String update_user(User u){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("update_user");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("email_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("username_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("password_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("phone_number_in", String.class, ParameterMode.IN);
+                           
+            spq.setParameter("id_in", u.getId());           
+            spq.setParameter("email_in", u.getEmail());
+            spq.setParameter("username_in", u.getUsername());
+            spq.setParameter("password_in", u.getPassword());
+            spq.setParameter("phone_number_in", u.getPhoneNumber());
+            
+            spq.execute();
+            return "A felhasználó adatainak megváltoztatása sikeresen végbement!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
+       }      
 }
