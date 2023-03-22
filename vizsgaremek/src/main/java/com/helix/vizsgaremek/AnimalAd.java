@@ -6,8 +6,10 @@ package com.helix.vizsgaremek;
 
 import Configuration.Database;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,6 +55,10 @@ import javax.xml.bind.annotation.XmlTransient;
 public class AnimalAd implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static List<AnimalAd> get() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -111,6 +117,10 @@ public class AnimalAd implements Serializable {
         this.date = date;
         this.dateOfAdd = dateOfAdd;
         this.lostOrFund = lostOrFund;
+    }
+
+    private AnimalAd(Integer id, Integer userId, String speciesOfAnimal, String title, String description, Date date, Date dateOfAdd, String lostOrFund) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public Integer getId() {
@@ -286,4 +296,71 @@ public class AnimalAd implements Serializable {
             emf.close();
         }              
     }
+        
+        public static List<AnimalAd> get_all_ads(){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        List<AnimalAd> ads = new ArrayList();
+        try{
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("get_all_ads");
+            List<Object[]> result = spq.getResultList();
+
+
+            for(Object[] rekord : result){
+                Integer id = Integer.parseInt(rekord[0].toString());
+                Integer userId = Integer.parseInt(rekord[1].toString());
+                String speciesOfAnimal = rekord[2].toString();
+                String title = rekord[3].toString();
+                String description = rekord[4].toString();
+                Date date = (Date) rekord[5];
+                Date dateOfAdd = (Date) rekord[6];
+                String lostOrFund = rekord[7].toString();
+                                
+                AnimalAd a = new AnimalAd(id,userId,speciesOfAnimal,title,description,date,dateOfAdd,lostOrFund);
+                ads.add(a);
+            }
+
+            return ads;
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return ads;
+        }
+        finally{
+            em.clear();
+            em.close();
+            emf.close();
+        }
+    } 
+        public static String update_ad(AnimalAd a){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("update_ad");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("title_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("description_in", String.class, ParameterMode.IN);
+            
+                           
+            spq.setParameter("id_in", a.getId());           
+            spq.setParameter("title_in", a.getTitle());
+            spq.setParameter("description_in", a.getDescription());
+            
+            spq.execute();
+            return "A Hírdetés adatainak megváltoztatása sikeresen végbement!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
+       }
 }

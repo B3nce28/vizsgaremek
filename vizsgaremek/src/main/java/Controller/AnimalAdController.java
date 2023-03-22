@@ -5,7 +5,7 @@
 package Controller;
 
 import com.helix.vizsgaremek.AnimalAd;
-import com.helix.vizsgaremek.User;
+import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
@@ -68,6 +68,22 @@ public class AnimalAdController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response delete_ad(AnimalAd ad){
         String result = AnimalAd.delete_ad(ad.getId());
+        return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
+    }
+    
+    @GET
+    @Path("get_all_ads")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response get_all_ads(){
+    List<AnimalAd> result = AnimalAd.get();
+    return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
+    }
+    
+    @POST
+    @Path("update_ad")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response update_ad(AnimalAd ad){
+        String result = AnimalAd.update_ad(ad);
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
 }

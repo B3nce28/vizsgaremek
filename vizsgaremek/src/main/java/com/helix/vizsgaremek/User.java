@@ -269,13 +269,14 @@ public class User implements Serializable {
             for(Object[] rekord : result){
                 Integer id = Integer.parseInt(rekord[0].toString());
                 String firstName = rekord[1].toString();
-                String  lastName = rekord[2].toString();
+                String lastName = rekord[2].toString();
                 String email = rekord[3].toString();
                 String username = rekord[4].toString();
                 String password = rekord[5].toString();
                 String phoneNumber = rekord[6].toString();
+                Date dateOfRegistration = (Date) rekord[7];
                                 
-                User u = new User(id,firstName,lastName,email,username,password,phoneNumber, null);
+                User u = new User(id,firstName,lastName,email,username,password,phoneNumber,dateOfRegistration);
                 users.add(u);
             }
 
