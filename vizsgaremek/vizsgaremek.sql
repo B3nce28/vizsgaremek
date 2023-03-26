@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Már 26. 16:33
+-- Létrehozás ideje: 2023. Már 09. 17:15
 -- Kiszolgáló verziója: 10.4.24-MariaDB
 -- PHP verzió: 8.1.6
 
@@ -27,8 +27,10 @@ DELIMITER $$
 --
 -- Eljárások
 --
+DROP PROCEDURE IF EXISTS `add_new_address`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `add_new_address` (IN `id_in` INT(11), IN `county_in` VARCHAR(200), IN `city_in` VARCHAR(200), IN `zip_code_in` INT(11))   INSERT INTO address (address.id, address.county, address.city, address.zip_code) VALUES (id_in, county_in, city_in, zip_code_in)$$
 
+DROP PROCEDURE IF EXISTS `add_password_replacement`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `add_password_replacement` (IN `email_in` VARCHAR(200), OUT `token_out` VARCHAR(256))   BEGIN
 
 UPDATE password_replacement SET password_replacement.used = 1 WHERE password_replacement.email = email_in;
@@ -36,8 +38,10 @@ INSERT INTO password_replacement (password_replacement.email, password_replaceme
 SELECT password_replacement.token INTO token_out FROM password_replacement WHERE password_replacement.id = LAST_INSERT_ID();
 END$$
 
+DROP PROCEDURE IF EXISTS `add_picture`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `add_picture` (IN `ad_id_in` INT, IN `picture_url_in` VARCHAR(200) CHARSET utf8)   INSERT INTO picture (picture.ad_id, picture.picture_url) VALUES (ad_id_in, picture_url_in)$$
 
+DROP PROCEDURE IF EXISTS `change_password`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `change_password` (IN `password_in` TEXT, IN `email_in` TEXT, IN `token_in` TEXT)   BEGIN
 
 UPDATE user SET user.password = SHA1(password_in) WHERE user.email = email_in;
@@ -46,40 +50,38 @@ UPDATE password_replacement SET password_replacement.used = 1 WHERE password_rep
 
 END$$
 
+DROP PROCEDURE IF EXISTS `check_email_unique`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_email_unique` (OUT `result` INT, IN `email_in` VARCHAR(200))   SELECT COUNT(user.id) into result FROM user WHERE user.email = email_in$$
 
+DROP PROCEDURE IF EXISTS `create_new_ad`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_new_ad` (IN `user_id_in` INT(11), IN `species_of_animal_in` VARCHAR(200), IN `title_in` VARCHAR(200), IN `description_in` VARCHAR(2000), IN `date_in` DATE, IN `lost_or_fund_in` VARCHAR(200))   INSERT INTO animal_ad (animal_ad.user_id,animal_ad.species_of_animal,animal_ad.title,animal_ad.description,animal_ad.date,animal_ad.date_of_add,animal_ad.lost_or_fund) VALUES (user_id_in, species_of_animal_in, title_in, description_in, date_in, CURRENT_DATE(), lost_or_fund_in)$$
 
+DROP PROCEDURE IF EXISTS `delete_ad`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_ad` (IN `id_in` INT(11))   BEGIN
 CALL delete_address(id_in);
 DELETE FROM picture WHERE picture.ad_id = id_in;
 DELETE FROM animal_ad WHERE animal_ad.id = id_in;
 END$$
 
+DROP PROCEDURE IF EXISTS `delete_address`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_address` (IN `id_in` INT)   DELETE FROM address WHERE address.id = id_in$$
 
+DROP PROCEDURE IF EXISTS `delete_picture`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_picture` (IN `id_in` INT)   delete FROM picture WHERE picture.id = id_in$$
 
+DROP PROCEDURE IF EXISTS `delete_user`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_user` (IN `id_in` INT)   delete FROM user WHERE user.id = id_in$$
 
+DROP PROCEDURE IF EXISTS `get_all_ads`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT * FROM animal_ad$$
 
+DROP PROCEDURE IF EXISTS `get_all_user`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_user` ()   SELECT * FROM user$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `email_in` VARCHAR(200), IN `password_in` VARCHAR(200), OUT `result_out` BOOLEAN)   BEGIN
-    DECLARE user_id INT;
-    
-    SELECT user.id INTO user_id FROM user WHERE user.email = email_in AND user.password = password_in LIMIT 1;
-    
-    IF user_id IS NOT NULL THEN
-        SET result_out = true;
-    ELSE
-        SET result_out = false;
-    END IF;
-END$$
-
+DROP PROCEDURE IF EXISTS `Registration`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Registration` (IN `first_name_in` VARCHAR(200), IN `last_name_in` VARCHAR(200), IN `email_in` VARCHAR(200), IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), IN `phone_number_in` VARCHAR(20))   INSERT INTO user (user.`first_name`, user.`last_name`, user.`email`, user.`username`, user.`password`, user.`phone_number`,user.`date_of_registration`) VALUES (first_name_in, last_name_in, email_in, username_in, SHA1(password_in), phone_number_in, CURRENT_DATE())$$
 
+DROP PROCEDURE IF EXISTS `search_ad`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `search_ad` (IN `searched_word1` VARCHAR(200), IN `searched_word2` VARCHAR(200))   BEGIN
 IF searched_word1 <> '' AND searched_word2 = '' THEN
 SELECT animal_ad.id, user_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1;
@@ -90,10 +92,13 @@ SELECT animal_ad.id, user_id, species_of_animal, title, description, `date`, dat
 END IF;
 END$$
 
+DROP PROCEDURE IF EXISTS `update_ad`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_ad` (IN `id_in` INT(11), IN `title_in` VARCHAR(200), IN `description_in` VARCHAR(2000))   UPDATE animal_ad SET animal_ad.title = title_in, animal_ad.description = description_in WHERE animal_ad.id = id_in$$
 
+DROP PROCEDURE IF EXISTS `update_address`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_address` (IN `id_in` INT, IN `county_in` VARCHAR(200), IN `city_in` VARCHAR(200), IN `zip_code_in` INT)   UPDATE address SET address.county = county_in, address.city = city_in, address.zip_code = zip_code_in WHERE address.id = id_in$$
 
+DROP PROCEDURE IF EXISTS `update_user`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_user` (IN `id_in` INT(11), IN `email_in` VARCHAR(200), IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), IN `phone_number_in` VARCHAR(200))   UPDATE user SET user.email = email_in, user.username=username_in, user.password = password_in, user.phone_number = phone_number_in WHERE user.id = id_in$$
 
 DELIMITER ;
@@ -104,6 +109,7 @@ DELIMITER ;
 -- Tábla szerkezet ehhez a táblához `address`
 --
 
+DROP TABLE IF EXISTS `address`;
 CREATE TABLE `address` (
   `id` int(11) NOT NULL,
   `county` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
@@ -116,7 +122,8 @@ CREATE TABLE `address` (
 --
 
 INSERT INTO `address` (`id`, `county`, `city`, `zip_code`) VALUES
-(1, 'Baranya', 'Pécs', 7622);
+(1, 'Baranya', 'Pécs', 7622),
+(2, 'Baranya', 'Nagyharsány', 7822);
 
 -- --------------------------------------------------------
 
@@ -124,6 +131,7 @@ INSERT INTO `address` (`id`, `county`, `city`, `zip_code`) VALUES
 -- Tábla szerkezet ehhez a táblához `animal_ad`
 --
 
+DROP TABLE IF EXISTS `animal_ad`;
 CREATE TABLE `animal_ad` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -140,8 +148,8 @@ CREATE TABLE `animal_ad` (
 --
 
 INSERT INTO `animal_ad` (`id`, `user_id`, `species_of_animal`, `title`, `description`, `date`, `date_of_add`, `lost_or_fund`) VALUES
-(1, 1, 'kutya', 'Elveszett kutya', 'Elveszett a kutyám', '2023-02-04', '2023-02-15', 'elveszett'),
-(5, 1, 'kutya', 'Talált vizsla', 'Találtam egy vizslát', '2023-03-22', '2023-03-22', 'talált');
+(1, 1, 'kutya', 'Elveszett a kutyám', 'A kutyám, Joe aki egy labrador elveszett Szészcheny utcában. Nagyon hiányzik. Kérlek, segítsetek. zett ', '2023-02-04', '2023-02-15', 'elveszett'),
+(2, 1, 'cica', 'Elveszett cica', 'nagyon elveszett a cica', '2023-02-10', '2023-02-15', 'elveszett');
 
 -- --------------------------------------------------------
 
@@ -149,6 +157,7 @@ INSERT INTO `animal_ad` (`id`, `user_id`, `species_of_animal`, `title`, `descrip
 -- Tábla szerkezet ehhez a táblához `password_replacement`
 --
 
+DROP TABLE IF EXISTS `password_replacement`;
 CREATE TABLE `password_replacement` (
   `id` int(11) NOT NULL,
   `email` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
@@ -164,6 +173,7 @@ CREATE TABLE `password_replacement` (
 -- Tábla szerkezet ehhez a táblához `picture`
 --
 
+DROP TABLE IF EXISTS `picture`;
 CREATE TABLE `picture` (
   `id` int(11) NOT NULL,
   `ad_id` int(11) NOT NULL,
@@ -176,6 +186,7 @@ CREATE TABLE `picture` (
 -- Tábla szerkezet ehhez a táblához `user`
 --
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
   `first_name` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
@@ -193,9 +204,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `username`, `password`, `phone_number`, `date_of_registration`) VALUES
 (1, 'Tivadar', 'Teszt', 'tesztes@freemail.hu', 'teszttivi001', 'tivadar01', '+36 30 222 1111', '2023-02-02'),
-(3, 'Joe', 'Mama', 'Mama', 'joe111', '9ee036287b4cfbcfa3b5bbfcf92d46eb5e75df96', '+36 70 111 0100 ', '2023-03-09'),
-(4, 'Béla', 'Kovács', 'Kovács', 'bela1', '2f712f2b4c17b108f5961465d36a19c98301c173', '123456789', '2023-03-10'),
-(9, 'László', 'Példa', 'lacipelda1@gmail.com', 'lacika', 'abc1', '+36 70 111 0111 ', '2023-03-16');
+(3, 'Joe', 'Mama', 'Mama', 'joe111', '9ee036287b4cfbcfa3b5bbfcf92d46eb5e75df96', '+36 70 111 0100 ', '2023-03-09');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -247,7 +256,7 @@ ALTER TABLE `address`
 -- AUTO_INCREMENT a táblához `animal_ad`
 --
 ALTER TABLE `animal_ad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT a táblához `password_replacement`
@@ -265,7 +274,7 @@ ALTER TABLE `picture`
 -- AUTO_INCREMENT a táblához `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Megkötések a kiírt táblákhoz
