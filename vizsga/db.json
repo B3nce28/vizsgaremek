@@ -26,6 +26,15 @@
       "password": "kutya101",
       "phoneNumber": "12312312",
       "id": 3
+    },
+    {
+      "username": "valami",
+      "firstname": "valami",
+      "lastname": "valami",
+      "email": "valami@gmail.com",
+      "password": "asdfghjk",
+      "phoneNumber": "+36 30 123 4567",
+      "id": 4
     }
   ]
 }
