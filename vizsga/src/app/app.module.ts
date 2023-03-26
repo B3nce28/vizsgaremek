@@ -9,13 +9,17 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ProfilComponent } from './profil/profil.component';
+import { MyAdsComponent } from './my-ads/my-ads.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     SignupComponent,
-    HomeComponent
+    HomeComponent,
+    ProfilComponent,
+    MyAdsComponent
   ],
   imports: [
     BrowserModule,

@@ -15,27 +15,29 @@ export class LoginComponent implements OnInit{
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)]],
       password: ['', Validators.required,Validators.minLength(8)]
     })
   }
 
-  login(){
-    this.http.get<any>("http://localhost:3000/signupUsers")
-    .subscribe(res=>{
-      const user =res.find((a:any)=>{
-        return a.email === this.loginForm.value.email && a.password === this.loginForm.value.password
+  login(addUser:any){
+    this.http.post<any>("http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/login", addUser)
+    .subscribe(res => {
+      const user = [res].find((a: any) => {
+        return a.email === this.loginForm.value.email && a.password === this.loginForm.value.password;
       });
-      if (user){
+      if (user) {
         alert("A bejelentkezés sikeres volt ");
-      this.loginForm.reset();
-      this.router.navigate(['home'])
-    }else{
-      alert("A felhasználó nem található")
-    }
-    },err=>{
-      alert("valami hiba történt")
-    })
+        this.loginForm.reset();
+        this.router.navigate(['home']);
+      } else {
+        alert("A felhasználó nem található");
+      }
+    }, err => {
+      alert("valami hiba történt");
+    });
+
   }
 
 }
+

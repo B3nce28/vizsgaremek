@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Már 14. 08:04
+-- Létrehozás ideje: 2023. Már 26. 16:33
 -- Kiszolgáló verziója: 10.4.24-MariaDB
 -- PHP verzió: 8.1.6
 
@@ -66,10 +66,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT * FROM ani
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_user` ()   SELECT * FROM user$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), OUT `result_out` BOOLEAN)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `email_in` VARCHAR(200), IN `password_in` VARCHAR(200), OUT `result_out` BOOLEAN)   BEGIN
     DECLARE user_id INT;
     
-    SELECT user.id INTO user_id FROM user WHERE user.username = username_in AND user.password = password_in LIMIT 1;
+    SELECT user.id INTO user_id FROM user WHERE user.email = email_in AND user.password = password_in LIMIT 1;
     
     IF user_id IS NOT NULL THEN
         SET result_out = true;
@@ -116,8 +116,7 @@ CREATE TABLE `address` (
 --
 
 INSERT INTO `address` (`id`, `county`, `city`, `zip_code`) VALUES
-(1, 'Baranya', 'Pécs', 7622),
-(2, 'Baranya', 'Nagyharsány', 7822);
+(1, 'Baranya', 'Pécs', 7622);
 
 -- --------------------------------------------------------
 
@@ -141,8 +140,8 @@ CREATE TABLE `animal_ad` (
 --
 
 INSERT INTO `animal_ad` (`id`, `user_id`, `species_of_animal`, `title`, `description`, `date`, `date_of_add`, `lost_or_fund`) VALUES
-(1, 1, 'kutya', 'Elveszett a kutyám', 'A kutyám, Joe aki egy labrador elveszett Szészcheny utcában. Nagyon hiányzik. Kérlek, segítsetek. zett ', '2023-02-04', '2023-02-15', 'elveszett'),
-(2, 1, 'cica', 'Elveszett cica', 'nagyon elveszett a cica', '2023-02-10', '2023-02-15', 'elveszett');
+(1, 1, 'kutya', 'Elveszett kutya', 'Elveszett a kutyám', '2023-02-04', '2023-02-15', 'elveszett'),
+(5, 1, 'kutya', 'Talált vizsla', 'Találtam egy vizslát', '2023-03-22', '2023-03-22', 'talált');
 
 -- --------------------------------------------------------
 
@@ -196,8 +195,7 @@ INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `username`, `passw
 (1, 'Tivadar', 'Teszt', 'tesztes@freemail.hu', 'teszttivi001', 'tivadar01', '+36 30 222 1111', '2023-02-02'),
 (3, 'Joe', 'Mama', 'Mama', 'joe111', '9ee036287b4cfbcfa3b5bbfcf92d46eb5e75df96', '+36 70 111 0100 ', '2023-03-09'),
 (4, 'Béla', 'Kovács', 'Kovács', 'bela1', '2f712f2b4c17b108f5961465d36a19c98301c173', '123456789', '2023-03-10'),
-(5, 'László', 'Példa', 'Példa', 'pelda1', '9ee036287b4cfbcfa3b5bbfcf92d46eb5e75df96', '+36 70 111 0100 ', '2023-03-10'),
-(6, 'Asd', 'Asd', 'asd@gmail.com', 'asd1', '2cdd4c1add11499bbdf36fded91e677d8caf516a', '+36 30 312 4141', '2023-03-13');
+(9, 'László', 'Példa', 'lacipelda1@gmail.com', 'lacika', 'abc1', '+36 70 111 0111 ', '2023-03-16');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -249,7 +247,7 @@ ALTER TABLE `address`
 -- AUTO_INCREMENT a táblához `animal_ad`
 --
 ALTER TABLE `animal_ad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT a táblához `password_replacement`
@@ -267,7 +265,7 @@ ALTER TABLE `picture`
 -- AUTO_INCREMENT a táblához `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Megkötések a kiírt táblákhoz
