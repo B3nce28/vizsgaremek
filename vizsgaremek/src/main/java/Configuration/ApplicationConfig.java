@@ -29,6 +29,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(Configuration.CorsFilter.class);
+        resources.add(Controller.AddressController.class);
         resources.add(Controller.AnimalAdController.class);
         resources.add(Controller.UserController.class);
     }

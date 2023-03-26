@@ -4,10 +4,13 @@
  */
 package com.helix.vizsgaremek;
 
+import Configuration.Database;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +18,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.ParameterMode;
+import javax.persistence.Persistence;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -139,5 +145,101 @@ public class Address implements Serializable {
     }
     
     
+        public static String add_new_address(Address a){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("add_new_address");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("county_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("city_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("zip_code_in", Integer.class, ParameterMode.IN);
+            
+                           
+            spq.setParameter("id_in", a.getId());
+            spq.setParameter("county_in", a.getCounty());
+            spq.setParameter("city_in", a.getCity());
+            spq.setParameter("zip_code_in", a.getZipCode());
+            
+            spq.execute();
+            return "Új cím hozzáadva!";
+        }
+        catch(Exception ex){
+            //Handle database exceptions
+            if(ex.getMessage().equals("org.hibernate.exception.ConstraintViolationException: Error calling CallableStatement.getMoreResults")){
+                return "Some unique value is duplicate!";
+            }
+            return "Hiba";
+        }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }        
+    }
+        
+        public static String update_address(Address a){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("update_address");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("county_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("city_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("zip_code_in", Integer.class, ParameterMode.IN);
+            
+                           
+            spq.setParameter("id_in", a.getId());
+            spq.setParameter("county_in", a.getCounty());
+            spq.setParameter("city_in", a.getCity());
+            spq.setParameter("zip_code_in", a.getZipCode());
+            spq.execute();
+            return "A cím adatainak megváltoztatása sikeresen végbement!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
+       }      
+        
+        public static String delete_address(Integer id){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("delete_address");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+              
+            spq.setParameter("id_in", id);
+            
+            spq.execute();
+            return "A cím törlésre került!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
+    }
     
 }
