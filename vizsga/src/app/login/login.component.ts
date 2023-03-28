@@ -20,22 +20,24 @@ export class LoginComponent implements OnInit{
     })
   }
 
-  login(){
-    this.http.get<any>("http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/login")
-    .subscribe(res=>{
-      const user =res.find((a:any)=>{
-        return a.email === this.loginForm.value.email && a.password === this.loginForm.value.password
+  login(addUser:any){
+    this.http.post<any>("http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/login", addUser)
+    .subscribe(res => {
+      const user = [res].find((a: any) => {
+        return a.email === this.loginForm.value.email && a.password === this.loginForm.value.password;
       });
-      if (user){
+      if (user) {
         alert("A bejelentkezés sikeres volt ");
-      this.loginForm.reset();
-      this.router.navigate(['home'])
-    }else{
-      alert("A felhasználó nem található")
-    }
-    },err=>{
-      alert("valami hiba történt")
-    })
+        this.loginForm.reset();
+        this.router.navigate(['home']);
+      } else {
+        alert("A felhasználó nem található");
+      }
+    }, err => {
+      alert("valami hiba történt");
+    });
+
   }
 
 }
+
