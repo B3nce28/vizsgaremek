@@ -293,15 +293,15 @@ public class User implements Serializable {
         }
     } 
     
-   public static Boolean login(String username, String password) {
+   public static Boolean login(String email, String password) {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
     EntityManager em = emf.createEntityManager();
     try {
         StoredProcedureQuery spq = em.createStoredProcedureQuery("login");
-        spq.registerStoredProcedureParameter("username_in", String.class, ParameterMode.IN);
+        spq.registerStoredProcedureParameter("email_in", String.class, ParameterMode.IN);
         spq.registerStoredProcedureParameter("password_in", String.class, ParameterMode.IN);
         spq.registerStoredProcedureParameter("result_out", Integer.class, ParameterMode.OUT);
-        spq.setParameter("username_in", username);
+        spq.setParameter("email_in", email);
         spq.setParameter("password_in", password);
         spq.execute();
         int result = (int) spq.getOutputParameterValue("result_out");

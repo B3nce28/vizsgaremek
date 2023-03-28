@@ -5,6 +5,7 @@
 package com.helix.vizsgaremek;
 
 import Configuration.Database;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,11 +86,15 @@ public class AnimalAd implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date date;
     @Basic(optional = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     @Column(name = "date_of_add")
     @Temporal(TemporalType.DATE)
     private Date dateOfAdd;
+    
+    
     @Basic(optional = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "lost_or_fund")
@@ -179,8 +184,8 @@ public class AnimalAd implements Serializable {
         this.lostOrFund = lostOrFund;
     }
 
-    public User getUserId() {
-        return userId;
+    public Integer getUserId() {
+        return userId.getId();
     }
 
     public void setUserId(User userId) {
@@ -194,6 +199,7 @@ public class AnimalAd implements Serializable {
     public void setAddress(Address address) {
         this.address = address;
     }
+    
 
     @XmlTransient
     public Collection<Picture> getPictureCollection() {
