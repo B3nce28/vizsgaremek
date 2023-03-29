@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="text-center">
+          <h1>Bejelentkezés</h1>
+          <h6>Kérlek add meg az e-mail címed és jelszavad</h6>
+        </div>
+          <form [formGroup]="loginForm" (ngSubmit)="login(loginForm.value)">
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">E-mail cím</label>
+              <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="E-mail címed">
+              <div *ngIf="loginForm.get('email')?.hasError('pattern') && loginForm.get('email')?.touched" class="text-danger">Helytelen e-mail cím formátum</div>
+              <div *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched" class="text-danger">Az e-mail cím megadása kötelező</div>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Jelszó</label>
+              <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Jelszó(legalább 8 karakter)" minlength="8">
+              <div *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched" class="text-danger">A jelszó megadása kötelező</div>
+              <div *ngIf="loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched" class="text-danger">A jelszó legalább 8 karakter hosszú kell legyen</div>
+            </div>
+            <button type="submit"  [disabled]="loginForm.invalid" class="btn btn-primary mb-2">Bejelentkezés</button>
+          </form>
+          <a style="color:#fff; margin-top: 10px;" routerLink="/signup">Új felhasználó Vagy? kattints ide!</a>
+      </div>
+    </div>
+  </div>
+</div>
