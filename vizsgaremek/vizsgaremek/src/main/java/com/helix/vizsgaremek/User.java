@@ -5,6 +5,7 @@
 package com.helix.vizsgaremek;
 
 import Configuration.Database;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,6 +93,7 @@ public class User implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
     @Basic(optional = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     @Column(name = "date_of_registration")
     @Temporal(TemporalType.DATE)
@@ -293,36 +295,46 @@ public class User implements Serializable {
         }
     } 
     
-   public static Boolean login(String email, String password) {
+public static User login(String email, String password) {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
     EntityManager em = emf.createEntityManager();
     try {
         StoredProcedureQuery spq = em.createStoredProcedureQuery("login");
+        
         spq.registerStoredProcedureParameter("email_in", String.class, ParameterMode.IN);
         spq.registerStoredProcedureParameter("password_in", String.class, ParameterMode.IN);
-        spq.registerStoredProcedureParameter("result_out", Integer.class, ParameterMode.OUT);
+       
+
         spq.setParameter("email_in", email);
         spq.setParameter("password_in", password);
-        spq.execute();
-        int result = (int) spq.getOutputParameterValue("result_out");
-        if (result == 1) {
-            return true;
-        } else {
-            return false;
-        }
         
-    }
-    catch(Exception ex){
+        List<Object[]> result = spq.getResultList();
+
+
+            for(Object[] rekord : result){
+                Integer id = Integer.parseInt(rekord[0].toString());
+                String firstName = rekord[1].toString();
+                String lastName = rekord[2].toString();
+                String email_in = rekord[3].toString();
+                String username = rekord[4].toString();
+                String password_in = rekord[5].toString();
+                String phoneNumber = rekord[6].toString();
+                Date dateOfRegistration = (Date) rekord[7];
+        
+                User u = new User(id,firstName,lastName,email,username,password,phoneNumber,dateOfRegistration);
+                return u;
+            }                      
+        }
+        catch(Exception ex){
             System.out.println(ex.getMessage());
-            return false;
+        }
+        finally{
+            em.clear();
+            em.close();
+            emf.close();
+        }
+        return null;
     }
-    
-    finally {
-        em.clear();
-        em.close();
-        emf.close();
-    }
-   }
    
    public static String delete_user(Integer id){
         EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
