@@ -16,15 +16,15 @@
             </div>
             <div class="mb-3">
               <label for="exampleInputEmail1" class="form-label">Vezetéknév</label>
-              <input formControlName="firstname" type="text" class="form-control" id="exampleInputLastName1" aria-describedby="emailHelp" placeholder="Vezetéknév">
-              <small *ngIf="signupForm.controls['firstname'].invalid && (signupForm.controls['firstname'].dirty || signupForm.controls['firstname'].touched)" class="text-danger">
+              <input formControlName="firstName" type="text" class="form-control" id="exampleInputLastName1" aria-describedby="emailHelp" placeholder="Vezetéknév">
+              <small *ngIf="signupForm.controls['firstName'].invalid && (signupForm.controls['firstName'].dirty || signupForm.controls['firstName'].touched)" class="text-danger">
                 A vezetéknév mező kitöltése kötelező!
               </small>
             </div>
             <div class="mb-3">
               <label for="exampleInputEmail1" class="form-label">Keresztnév</label>
-              <input formControlName="lastname" type="text" class="form-control" id="exampleInputFirstName1" aria-describedby="emailHelp" placeholder="Keresztnév">
-              <small *ngIf="signupForm.controls['lastname'].invalid && (signupForm.controls['lastname'].dirty || signupForm.controls['lastname'].touched)" class="text-danger">
+              <input formControlName="lastName" type="text" class="form-control" id="exampleInputFirstName1" aria-describedby="emailHelp" placeholder="Keresztnév">
+              <small *ngIf="signupForm.controls['lastName'].invalid && (signupForm.controls['lastName'].dirty || signupForm.controls['lastName'].touched)" class="text-danger">
                 A keresztnév mező kitöltése kötelező!
               </small>
             </div>
@@ -54,7 +54,7 @@
             </div>
             </div>
 
-            <button type="submit" [disabled]="!signupForm.valid" class="btn btn-primary">Regisztráció</button>
+            <button type="submit" [disabled]="signupForm.invalid" class="btn btn-primary">Regisztráció</button>
           </form>
           <a style="color:#fff; margin-top: 10px;" routerLink="/login">Van már fiókod? kattints ide!!</a>
       </div>
