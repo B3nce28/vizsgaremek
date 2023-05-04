@@ -1,1 +1,66 @@
-<p>my-ads works!</p>
+<nav>
+  <a routerLink="/home">Home</a>
+  <a routerLink="/profil">Profile</a>
+  <a routerLink="/my-ads">My Ads</a>
+  <button routerLink="/login" class="btn btn-danger mx-2">kijelentkezés</button>
+</nav>
+
+<div class="centered">
+  <mat-card class="example-card" fxLayout="row">
+    <mat-card-header fxLayout="row" fxLayoutAlign="space-between center">
+      <mat-card-title>Saját hirdetéseim</mat-card-title>
+      <div class="btn">
+        <button type="submit" mat-button color="primary" (click)="openAddAds()">Hírdetés feladás</button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- <div class="over-lay">
+  <div class="content">
+    species_of_animal:<input type="text" class="form-control">
+    title:
+    description:
+    date:
+    lost_or_found:
+  </div>
+</div> -->
+
+
+<!-- <div class="modal fade" id="createPostModal" tabindex="-1" role="dialog" aria-labelledby="createPostModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createPostModalLabel">Hírdetés feladása</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="title">Cím</label>
+            <input type="text" class="form-control" id="title"  name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Leírás</label>
+            <textarea class="form-control" id="description" rows="3"  name="description" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="price">Ár</label>
+            <input type="number" class="form-control" id="price"  name="price" required>
+          </div>
+          <div class="form-group">
+            <label for="location">Helyszín</label>
+            <input type="text" class="form-control" id="location"  name="location" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Feladás</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->
+

@@ -1,9 +1,18 @@
 <nav>
-  <a routerLink="home">Home</a>
+  <a routerLink="/home">Home</a>
   <a routerLink="/profil">Profile</a>
   <a routerLink="/my-ads">My Ads</a>
   <button routerLink="/login" class="btn btn-danger mx-2" >kijelentkezés</button>
 </nav>
 
-<router-outlet></router-outlet>
-
+<div class="post-card">
+  <div class="post-card-image">
+    <img src="kutya.jpg" alt="Eltűnt kutya">
+  </div>
+  <div class="post-card-content">
+    <h2>Kutya</h2>
+    <p><strong>Eltűnés helye és ideje:</strong> Budapest, 2023.04.21.</p>
+    <p><strong>Poszt szerzője:</strong> Péter</p>
+    <p><strong>Elérhetőség:</strong> peter@example.com</p>
+  </div>
+</div>

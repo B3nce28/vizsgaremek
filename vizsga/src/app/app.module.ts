@@ -11,6 +11,24 @@ import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProfilComponent } from './profil/profil.component';
 import { MyAdsComponent } from './my-ads/my-ads.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTableModule } from '@angular/material/table';
+// import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatCardModule} from '@angular/material/card';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AddAdsComponent } from './add-ads/add-ads.component';
+// import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -19,7 +37,8 @@ import { MyAdsComponent } from './my-ads/my-ads.component';
     SignupComponent,
     HomeComponent,
     ProfilComponent,
-    MyAdsComponent
+    MyAdsComponent,
+    AddAdsComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,6 +46,25 @@ import { MyAdsComponent } from './my-ads/my-ads.component';
     NgbModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    MatTableModule,
+    // MatPaginatorModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatDividerModule,
+    MatProgressBarModule,
+    // MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
