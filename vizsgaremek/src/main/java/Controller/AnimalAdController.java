@@ -73,9 +73,8 @@ public class AnimalAdController {
     
     @GET
     @Path("get_all_ads")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response get_all_ads(){
-    List<AnimalAd> result = AnimalAd.get();
+    List<AnimalAd> result = AnimalAd.get_all_ads();
     return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
     

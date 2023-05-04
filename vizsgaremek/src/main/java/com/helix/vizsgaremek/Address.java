@@ -6,7 +6,12 @@ package com.helix.vizsgaremek;
 
 import Configuration.Database;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -17,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.ParameterMode;
 import javax.persistence.Persistence;
@@ -25,6 +31,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -61,9 +68,8 @@ public class Address implements Serializable {
     @NotNull
     @Column(name = "zip_code")
     private int zipCode;
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private AnimalAd animalAd;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "addressId")
+    private Collection<AnimalAd> animalAdCollection;
 
     public Address() {
     }
@@ -111,12 +117,13 @@ public class Address implements Serializable {
         this.zipCode = zipCode;
     }
 
-    public AnimalAd getAnimalAd() {
-        return animalAd;
+    @XmlTransient
+    public Collection<AnimalAd> getAnimalAdCollection() {
+        return animalAdCollection;
     }
 
-    public void setAnimalAd(AnimalAd animalAd) {
-        this.animalAd = animalAd;
+    public void setAnimalAdCollection(Collection<AnimalAd> animalAdCollection) {
+        this.animalAdCollection = animalAdCollection;
     }
 
     @Override
@@ -141,7 +148,7 @@ public class Address implements Serializable {
 
     @Override
     public String toString() {
-        return "com.helix.vizsgaremek.Address[ id=" + id + " ]";
+        return "com.helix.mavenproject1.Address[ id=" + id + " ]";
     }
     
     
@@ -153,13 +160,12 @@ public class Address implements Serializable {
             //Create SPQ and run it
             StoredProcedureQuery spq = em.createStoredProcedureQuery("add_new_address");
             
-            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+            
             spq.registerStoredProcedureParameter("county_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("city_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("zip_code_in", Integer.class, ParameterMode.IN);
             
                            
-            spq.setParameter("id_in", a.getId());
             spq.setParameter("county_in", a.getCounty());
             spq.setParameter("city_in", a.getCity());
             spq.setParameter("zip_code_in", a.getZipCode());
@@ -241,5 +247,37 @@ public class Address implements Serializable {
             emf.close();
         }              
     }
+        
+        public static List<Address> get_all_address(){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        List<Address> addresses = new ArrayList();
+        try{
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("get_all_address");
+            List<Object[]> result = spq.getResultList();
+
+
+            for(Object[] rekord : result){
+                Integer id = Integer.parseInt(rekord[0].toString());
+                String county = rekord[1].toString();
+                String city = rekord[2].toString();
+                Integer zipCode = Integer.parseInt(rekord[3].toString());
+                                
+                Address a = new Address(id,county,city,zipCode);
+                addresses.add(a);
+            }
+
+            return addresses;
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return addresses;
+        }
+        finally{
+            em.clear();
+            em.close();
+            emf.close();
+        }
+    } 
     
 }

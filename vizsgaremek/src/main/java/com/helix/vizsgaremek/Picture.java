@@ -4,10 +4,14 @@
  */
 package com.helix.vizsgaremek;
 
+import Configuration.Database;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +19,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.Persistence;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -107,6 +114,65 @@ public class Picture implements Serializable {
     @Override
     public String toString() {
         return "com.helix.vizsgaremek.Picture[ id=" + id + " ]";
+    }
+    
+    public static String add_picture(Picture p){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("add_picture");
+            
+            spq.registerStoredProcedureParameter("ad_id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("picture_url_in", String.class, ParameterMode.IN);
+            
+            spq.setParameter("ad_id_in", p.getAdId().getId());
+            spq.setParameter("picture_url_in", p.getPictureUrl());
+            
+            spq.execute();
+            return "Új kép sikeresen hozzáadva a hírdetéshez!";
+        }
+        catch(Exception ex){
+            //Handle database exceptions
+            if(ex.getMessage().equals("org.hibernate.exception.ConstraintViolationException: Error calling CallableStatement.getMoreResults")){
+                return "Some unique value is duplicate!";
+            }
+            return "Hiba";
+        }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }                
+    }
+    
+    public static String delete_picture(Integer id){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        
+        try{
+            //Create SPQ and run it
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("delete_picture");
+            
+            spq.registerStoredProcedureParameter("id_in", Integer.class, ParameterMode.IN);
+              
+            spq.setParameter("id_in", id);
+            
+            spq.execute();
+            return "A kép törlésre került!";
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return "Hiba!";
+    }
+        finally{
+            //clean up metods, and close connections
+            em.clear();
+            em.close();
+            emf.close();
+        }              
     }
     
 }

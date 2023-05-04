@@ -4,8 +4,7 @@
  */
 package Controller;
 
-import com.helix.vizsgaremek.Address;
-import java.util.List;
+import com.helix.vizsgaremek.Picture;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
@@ -23,20 +22,20 @@ import javax.ws.rs.core.Response;
  *
  * @author Csoszi
  */
-@Path("Address")
-public class AddressController {
+@Path("Picture")
+public class PictureController {
 
     @Context
     private UriInfo context;
 
     /**
-     * Creates a new instance of Address
+     * Creates a new instance of PictureController
      */
-    public AddressController() {
+    public PictureController() {
     }
 
     /**
-     * Retrieves representation of an instance of Controller.Address
+     * Retrieves representation of an instance of Controller.PictureController
      * @return an instance of java.lang.String
      */
     @GET
@@ -47,7 +46,7 @@ public class AddressController {
     }
 
     /**
-     * PUT method for updating or creating an instance of Address
+     * PUT method for updating or creating an instance of PictureController
      * @param content representation for the resource
      */
     @PUT
@@ -56,32 +55,17 @@ public class AddressController {
     }
     
     @POST
-    @Path("add_new_address")
+    @Path("add_picture")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response add_new_address(Address address){
-        String result = Address.add_new_address(address);
+    public Response add_picture(Picture picture){
+        String result = Picture.add_picture(picture);
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
-    
-    @POST
-    @Path("update_address")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response update_address(Address address){
-        String result = Address.update_address(address);
-        return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
-    }
-    
     @DELETE
-    @Path("delete_address")
+    @Path("delete_picture")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response delete_address(Address address){
-        String result = Address.delete_address(address.getId());
+    public Response delete_picture(Picture picture){
+        String result = Picture.delete_picture(picture.getId());
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
-    }
-    @GET
-    @Path("get_all_address")
-    public Response get_all_address(){
-    List<Address> result = Address.get_all_address();
-    return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
 }

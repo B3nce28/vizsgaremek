@@ -74,14 +74,9 @@ public class UserController {
     @POST
     @Path("login")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean login(User user) {
-    boolean result = User.login(user.getEmail(), user.getPassword());
-    if (result) {
-        return true;
-    } else {
-        return false;
-        
-    }
+    public Response login(User user) {
+        User result = User.login(user.getEmail(), user.getPassword());
+        return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
     
     @DELETE

@@ -102,8 +102,9 @@ public class AnimalAd implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "animalAd")
-    private Address address;
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Address addressId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "adId")
     private Collection<Picture> pictureCollection;
 
@@ -192,12 +193,12 @@ public class AnimalAd implements Serializable {
         this.userId = userId;
     }
 
-    public Address getAddress() {
-        return address;
+     public Address getAddressId() {
+        return addressId;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddressId(Address addressId) {
+        this.addressId = addressId;
     }
     
 
@@ -244,6 +245,7 @@ public class AnimalAd implements Serializable {
             StoredProcedureQuery spq = em.createStoredProcedureQuery("create_new_ad");
             
             spq.registerStoredProcedureParameter("user_id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("address_id_in", Integer.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("species_of_animal_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("title_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("description_in", String.class, ParameterMode.IN);
@@ -251,6 +253,7 @@ public class AnimalAd implements Serializable {
             spq.registerStoredProcedureParameter("lost_or_fund_in", String.class, ParameterMode.IN);
                            
             spq.setParameter("user_id_in", a.getUserId());
+            spq.setParameter("address_id_in", a.getAddressId().getId());
             spq.setParameter("species_of_animal_in", a.getSpeciesOfAnimal());
             spq.setParameter("title_in", a.getTitle());
             spq.setParameter("description_in", a.getDescription());
@@ -308,10 +311,11 @@ public class AnimalAd implements Serializable {
         EntityManager em = emf.createEntityManager();
         List<AnimalAd> ads = new ArrayList();
         try{
+            
             StoredProcedureQuery spq = em.createStoredProcedureQuery("get_all_ads");
+            spq.execute();
             List<Object[]> result = spq.getResultList();
-
-
+                                 
             for(Object[] rekord : result){
                 Integer id = Integer.parseInt(rekord[0].toString());
                 Integer userId = Integer.parseInt(rekord[1].toString());
@@ -321,9 +325,16 @@ public class AnimalAd implements Serializable {
                 Date date = (Date) rekord[5];
                 Date dateOfAdd = (Date) rekord[6];
                 String lostOrFund = rekord[7].toString();
-                                
+                String county = rekord[8].toString();
+                String city = rekord[9].toString();
+                Integer zipCode = Integer.parseInt(rekord[10].toString());    
+                
                 AnimalAd a = new AnimalAd(id,userId,speciesOfAnimal,title,description,date,dateOfAdd,lostOrFund);
+                System.out.println(a.userId.getEmail());
+                        
+                      
                 ads.add(a);
+                
             }
 
             return ads;
