@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Már 26. 16:33
+-- Létrehozás ideje: 2023. Máj 04. 16:31
 -- Kiszolgáló verziója: 10.4.24-MariaDB
 -- PHP verzió: 8.1.6
 
@@ -27,7 +27,7 @@ DELIMITER $$
 --
 -- Eljárások
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_new_address` (IN `id_in` INT(11), IN `county_in` VARCHAR(200), IN `city_in` VARCHAR(200), IN `zip_code_in` INT(11))   INSERT INTO address (address.id, address.county, address.city, address.zip_code) VALUES (id_in, county_in, city_in, zip_code_in)$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_new_address` (IN `county_in` VARCHAR(200), IN `city_in` VARCHAR(200), IN `zip_code_in` INT(11))   INSERT INTO address ( address.county, address.city, address.zip_code) VALUES ( county_in, city_in, zip_code_in)$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `add_password_replacement` (IN `email_in` VARCHAR(200), OUT `token_out` VARCHAR(256))   BEGIN
 
@@ -48,7 +48,7 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_email_unique` (OUT `result` INT, IN `email_in` VARCHAR(200))   SELECT COUNT(user.id) into result FROM user WHERE user.email = email_in$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `create_new_ad` (IN `user_id_in` INT(11), IN `species_of_animal_in` VARCHAR(200), IN `title_in` VARCHAR(200), IN `description_in` VARCHAR(2000), IN `date_in` DATE, IN `lost_or_fund_in` VARCHAR(200))   INSERT INTO animal_ad (animal_ad.user_id,animal_ad.species_of_animal,animal_ad.title,animal_ad.description,animal_ad.date,animal_ad.date_of_add,animal_ad.lost_or_fund) VALUES (user_id_in, species_of_animal_in, title_in, description_in, date_in, CURRENT_DATE(), lost_or_fund_in)$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_new_ad` (IN `user_id_in` INT(11), IN `address_id_in` INT(11), IN `species_of_animal_in` VARCHAR(200), IN `title_in` VARCHAR(200), IN `description_in` VARCHAR(2000), IN `date_in` DATE, IN `lost_or_fund_in` VARCHAR(200))   INSERT INTO animal_ad (animal_ad.user_id,animal_ad.address_id,animal_ad.species_of_animal,animal_ad.title,animal_ad.description,animal_ad.date,animal_ad.date_of_add,animal_ad.lost_or_fund) VALUES (user_id_in,address_id_in, species_of_animal_in, title_in, description_in, date_in, CURRENT_DATE(), lost_or_fund_in)$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_ad` (IN `id_in` INT(11))   BEGIN
 CALL delete_address(id_in);
@@ -62,29 +62,23 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_picture` (IN `id_in` INT)   
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_user` (IN `id_in` INT)   delete FROM user WHERE user.id = id_in$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT * FROM animal_ad$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_address` ()   SELECT * FROM address$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT animal_ad.*, address.county, address.city, address.zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_user` ()   SELECT * FROM user$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `email_in` VARCHAR(200), IN `password_in` VARCHAR(200), OUT `result_out` BOOLEAN)   BEGIN
-    DECLARE user_id INT;
-    
-    SELECT user.id INTO user_id FROM user WHERE user.email = email_in AND user.password = password_in LIMIT 1;
-    
-    IF user_id IS NOT NULL THEN
-        SET result_out = true;
-    ELSE
-        SET result_out = false;
-    END IF;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `email_in` VARCHAR(200), IN `password_in` VARCHAR(200))   BEGIN
+ SELECT * FROM user WHERE user.email = email_in AND user.password = SHA1(password_in);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Registration` (IN `first_name_in` VARCHAR(200), IN `last_name_in` VARCHAR(200), IN `email_in` VARCHAR(200), IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), IN `phone_number_in` VARCHAR(20))   INSERT INTO user (user.`first_name`, user.`last_name`, user.`email`, user.`username`, user.`password`, user.`phone_number`,user.`date_of_registration`) VALUES (first_name_in, last_name_in, email_in, username_in, SHA1(password_in), phone_number_in, CURRENT_DATE())$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `search_ad` (IN `searched_word1` VARCHAR(200), IN `searched_word2` VARCHAR(200))   BEGIN
 IF searched_word1 <> '' AND searched_word2 = '' THEN
-SELECT animal_ad.id, user_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1;
+SELECT animal_ad.id, user_id, address_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1;
 ELSEIF searched_word1 <> '' AND searched_word2 <> '' THEN
-SELECT animal_ad.id, user_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE (animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1) AND (animal_ad.species_of_animal = searched_word2 OR animal_ad.title = searched_word2 OR animal_ad.date = searched_word2 OR animal_ad.date_of_add = searched_word2 OR animal_ad.lost_or_fund = searched_word2 OR address.county = searched_word2 OR address.city = searched_word2 OR address.zip_code = searched_word2);
+SELECT animal_ad.id, user_id, address_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE (animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1) AND (animal_ad.species_of_animal = searched_word2 OR animal_ad.title = searched_word2 OR animal_ad.date = searched_word2 OR animal_ad.date_of_add = searched_word2 OR animal_ad.lost_or_fund = searched_word2 OR address.county = searched_word2 OR address.city = searched_word2 OR address.zip_code = searched_word2);
 
 
 END IF;
@@ -116,7 +110,10 @@ CREATE TABLE `address` (
 --
 
 INSERT INTO `address` (`id`, `county`, `city`, `zip_code`) VALUES
-(1, 'Baranya', 'Pécs', 7622);
+(1, 'Baranya', 'Pécs', 7622),
+(5, 'Baranya', 'Nagyharsány', 7822),
+(7, 'Baranya', 'Mohács', 7700),
+(8, 'Baranya', 'Kisharsány', 7800);
 
 -- --------------------------------------------------------
 
@@ -127,6 +124,7 @@ INSERT INTO `address` (`id`, `county`, `city`, `zip_code`) VALUES
 CREATE TABLE `animal_ad` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
   `species_of_animal` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
   `title` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
   `description` varchar(2000) COLLATE utf8_hungarian_ci NOT NULL,
@@ -139,9 +137,15 @@ CREATE TABLE `animal_ad` (
 -- A tábla adatainak kiíratása `animal_ad`
 --
 
-INSERT INTO `animal_ad` (`id`, `user_id`, `species_of_animal`, `title`, `description`, `date`, `date_of_add`, `lost_or_fund`) VALUES
-(1, 1, 'kutya', 'Elveszett kutya', 'Elveszett a kutyám', '2023-02-04', '2023-02-15', 'elveszett'),
-(5, 1, 'kutya', 'Talált vizsla', 'Találtam egy vizslát', '2023-03-22', '2023-03-22', 'talált');
+INSERT INTO `animal_ad` (`id`, `user_id`, `address_id`, `species_of_animal`, `title`, `description`, `date`, `date_of_add`, `lost_or_fund`) VALUES
+(1, 1, 1, 'kutya', 'Elveszett kutya', 'Elveszett a kutyám', '2023-02-04', '2023-02-15', 'elveszett'),
+(5, 1, 1, 'kutya', 'Talált vizsla', 'Találtam egy vizslát', '2023-03-22', '2023-03-22', 'talált'),
+(6, 9, 1, 'kutya', 'Elveszett Németjuhász', '3 éves németjuhász kan kutyám, Bodri elveszett.', '2023-03-05', '2023-03-28', 'elveszett'),
+(7, 3, 1, 'ló', 'Talált ló az utcán', 'A nyílt utcán találtam egy barna lovat.', '2023-03-28', '2023-03-28', 'talált'),
+(8, 3, 1, 'ló', 'Talált Kanca', 'Találtam egy fehér kancát a járdán.', '2023-03-28', '2023-03-29', 'talált'),
+(9, 11, 1, 'macska', 'Talált macska', 'Fajtiszta macskát találtam.', '2023-04-24', '2023-04-26', 'talált'),
+(10, 11, 1, 'papagáj', 'Elveszett papagáj', 'Elveszett a papagájom tegnap este.', '2023-05-03', '2023-05-04', 'elveszett'),
+(11, 11, 1, 'macska', 'Talált macska', 'Talált macska, egészséges.', '2023-05-01', '2023-05-04', 'talált');
 
 -- --------------------------------------------------------
 
@@ -195,7 +199,10 @@ INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `username`, `passw
 (1, 'Tivadar', 'Teszt', 'tesztes@freemail.hu', 'teszttivi001', 'tivadar01', '+36 30 222 1111', '2023-02-02'),
 (3, 'Joe', 'Mama', 'Mama', 'joe111', '9ee036287b4cfbcfa3b5bbfcf92d46eb5e75df96', '+36 70 111 0100 ', '2023-03-09'),
 (4, 'Béla', 'Kovács', 'Kovács', 'bela1', '2f712f2b4c17b108f5961465d36a19c98301c173', '123456789', '2023-03-10'),
-(9, 'László', 'Példa', 'lacipelda1@gmail.com', 'lacika', 'abc1', '+36 70 111 0111 ', '2023-03-16');
+(9, 'László', 'Példa', 'lacipelda1@gmail.com', 'lacika', 'abc1', '+36 70 111 0111 ', '2023-03-16'),
+(10, 'Anna', 'Példa', 'anna10@gmail.com', 'annapelda1', 'd6a9450dc08555d6ecfaf7162e5267f401e6dd9a', '+36 70 111 01111 ', '2023-04-23'),
+(11, 'Alma', 'Alma', 'alma1@gmail.com', 'alma1', '89afb985f6b6d698a67d4531101b2c2daf0562a5', '+36 70 100 01111 ', '2023-04-26'),
+(12, 'Körte', 'Körte', 'körte1@gmail.com', 'körte1', '0346d58200fc83420b9b3ced5a64c72fe703ecb5', '+36 30 222 1222', '2023-04-26');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -212,7 +219,8 @@ ALTER TABLE `address`
 --
 ALTER TABLE `animal_ad`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `address_id` (`address_id`);
 
 --
 -- A tábla indexei `password_replacement`
@@ -241,13 +249,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT a táblához `address`
 --
 ALTER TABLE `address`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT a táblához `animal_ad`
 --
 ALTER TABLE `animal_ad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT a táblához `password_replacement`
@@ -259,29 +267,24 @@ ALTER TABLE `password_replacement`
 -- AUTO_INCREMENT a táblához `picture`
 --
 ALTER TABLE `picture`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT a táblához `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Megkötések a kiírt táblákhoz
 --
 
 --
--- Megkötések a táblához `address`
---
-ALTER TABLE `address`
-  ADD CONSTRAINT `address_ibfk_1` FOREIGN KEY (`id`) REFERENCES `animal_ad` (`id`);
-
---
 -- Megkötések a táblához `animal_ad`
 --
 ALTER TABLE `animal_ad`
-  ADD CONSTRAINT `animal_ad_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `animal_ad_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `animal_ad_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `address` (`id`);
 
 --
 -- Megkötések a táblához `picture`
