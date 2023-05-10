@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Máj 04. 16:31
+-- Létrehozás ideje: 2023. Máj 10. 13:31
 -- Kiszolgáló verziója: 10.4.24-MariaDB
 -- PHP verzió: 8.1.6
 
@@ -64,7 +64,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_user` (IN `id_in` INT)   del
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_address` ()   SELECT * FROM address$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT animal_ad.*, address.county, address.city, address.zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_ads` ()   SELECT animal_ad.*, address.county, address.city, address.zip_code, user.email, user.username FROM animal_ad LEFT JOIN address ON animal_ad.address_id = address.id LEFT JOIN user ON animal_ad.user_id = user.id$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_user` ()   SELECT * FROM user$$
 
@@ -76,9 +76,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Registration` (IN `first_name_in` V
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `search_ad` (IN `searched_word1` VARCHAR(200), IN `searched_word2` VARCHAR(200))   BEGIN
 IF searched_word1 <> '' AND searched_word2 = '' THEN
-SELECT animal_ad.id, user_id, address_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1;
+SELECT animal_ad.*, address.county, address.city, address.zip_code, user.email, user.username FROM animal_ad LEFT JOIN address ON animal_ad.address_id = address.id LEFT JOIN user ON animal_ad.user_id = user.id WHERE animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1;
 ELSEIF searched_word1 <> '' AND searched_word2 <> '' THEN
-SELECT animal_ad.id, user_id, address_id, species_of_animal, title, description, `date`, date_of_add, lost_or_fund, county, city, zip_code FROM animal_ad LEFT JOIN address ON animal_ad.id = address.id WHERE (animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1) AND (animal_ad.species_of_animal = searched_word2 OR animal_ad.title = searched_word2 OR animal_ad.date = searched_word2 OR animal_ad.date_of_add = searched_word2 OR animal_ad.lost_or_fund = searched_word2 OR address.county = searched_word2 OR address.city = searched_word2 OR address.zip_code = searched_word2);
+SELECT animal_ad.*, address.county, address.city, address.zip_code, user.email, user.username FROM animal_ad LEFT JOIN address ON animal_ad.address_id = address.id LEFT JOIN user ON animal_ad.user_id = user.id WHERE (animal_ad.species_of_animal = searched_word1 OR animal_ad.title = searched_word1 OR animal_ad.date = searched_word1 OR animal_ad.date_of_add = searched_word1 OR animal_ad.lost_or_fund = searched_word1 OR address.county = searched_word1 OR address.city = searched_word1 OR address.zip_code = searched_word1) AND (animal_ad.species_of_animal = searched_word2 OR animal_ad.title = searched_word2 OR animal_ad.date = searched_word2 OR animal_ad.date_of_add = searched_word2 OR animal_ad.lost_or_fund = searched_word2 OR address.county = searched_word2 OR address.city = searched_word2 OR address.zip_code = searched_word2);
 
 
 END IF;
@@ -145,7 +145,9 @@ INSERT INTO `animal_ad` (`id`, `user_id`, `address_id`, `species_of_animal`, `ti
 (8, 3, 1, 'ló', 'Talált Kanca', 'Találtam egy fehér kancát a járdán.', '2023-03-28', '2023-03-29', 'talált'),
 (9, 11, 1, 'macska', 'Talált macska', 'Fajtiszta macskát találtam.', '2023-04-24', '2023-04-26', 'talált'),
 (10, 11, 1, 'papagáj', 'Elveszett papagáj', 'Elveszett a papagájom tegnap este.', '2023-05-03', '2023-05-04', 'elveszett'),
-(11, 11, 1, 'macska', 'Talált macska', 'Talált macska, egészséges.', '2023-05-01', '2023-05-04', 'talált');
+(11, 11, 1, 'macska', 'Talált macska', 'Talált macska, egészséges.', '2023-05-01', '2023-05-04', 'talált'),
+(12, 11, 7, 'macska', 'Elveszett Lujza macska', 'Elveszett lujza nevü cicám.', '2023-05-01', '2023-05-07', 'elveszett'),
+(13, 10, 5, 'kutya', 'Elveszet kiskutya.', 'Elveszett Pötyi nevü kiskutyám.', '2023-05-06', '2023-05-07', 'elveszett');
 
 -- --------------------------------------------------------
 
@@ -255,7 +257,7 @@ ALTER TABLE `address`
 -- AUTO_INCREMENT a táblához `animal_ad`
 --
 ALTER TABLE `animal_ad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT a táblához `password_replacement`

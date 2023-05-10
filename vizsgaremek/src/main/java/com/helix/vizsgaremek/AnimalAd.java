@@ -25,13 +25,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.ParameterMode;
 import javax.persistence.Persistence;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -81,6 +81,7 @@ public class AnimalAd implements Serializable {
     @Column(name = "description")
     private String description;
     @Basic(optional = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
@@ -94,7 +95,6 @@ public class AnimalAd implements Serializable {
     
     
     @Basic(optional = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "lost_or_fund")
@@ -115,18 +115,17 @@ public class AnimalAd implements Serializable {
         this.id = id;
     }
 
-    public AnimalAd(Integer id, String speciesOfAnimal, String title, String description, Date date, Date dateOfAdd, String lostOrFund) {
+    public AnimalAd(Integer id,User userId , Address addressId, String speciesOfAnimal, String title, String description, Date date, Date dateOfAdd, String lostOrFund) {
         this.id = id;
+        this.userId = userId;
+        this.addressId = addressId;
         this.speciesOfAnimal = speciesOfAnimal;
         this.title = title;
         this.description = description;
         this.date = date;
         this.dateOfAdd = dateOfAdd;
         this.lostOrFund = lostOrFund;
-    }
-
-    private AnimalAd(Integer id, Integer userId, String speciesOfAnimal, String title, String description, Date date, Date dateOfAdd, String lostOrFund) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     public Integer getId() {
@@ -185,8 +184,8 @@ public class AnimalAd implements Serializable {
         this.lostOrFund = lostOrFund;
     }
 
-    public Integer getUserId() {
-        return userId.getId();
+    public User getUserId() {
+        return userId;
     }
 
     public void setUserId(User userId) {
@@ -252,7 +251,7 @@ public class AnimalAd implements Serializable {
             spq.registerStoredProcedureParameter("date_in", Date.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("lost_or_fund_in", String.class, ParameterMode.IN);
                            
-            spq.setParameter("user_id_in", a.getUserId());
+            spq.setParameter("user_id_in", a.getUserId().getId());
             spq.setParameter("address_id_in", a.getAddressId().getId());
             spq.setParameter("species_of_animal_in", a.getSpeciesOfAnimal());
             spq.setParameter("title_in", a.getTitle());
@@ -306,49 +305,7 @@ public class AnimalAd implements Serializable {
         }              
     }
         
-        public static List<AnimalAd> get_all_ads(){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
-        EntityManager em = emf.createEntityManager();
-        List<AnimalAd> ads = new ArrayList();
-        try{
-            
-            StoredProcedureQuery spq = em.createStoredProcedureQuery("get_all_ads");
-            spq.execute();
-            List<Object[]> result = spq.getResultList();
-                                 
-            for(Object[] rekord : result){
-                Integer id = Integer.parseInt(rekord[0].toString());
-                Integer userId = Integer.parseInt(rekord[1].toString());
-                String speciesOfAnimal = rekord[2].toString();
-                String title = rekord[3].toString();
-                String description = rekord[4].toString();
-                Date date = (Date) rekord[5];
-                Date dateOfAdd = (Date) rekord[6];
-                String lostOrFund = rekord[7].toString();
-                String county = rekord[8].toString();
-                String city = rekord[9].toString();
-                Integer zipCode = Integer.parseInt(rekord[10].toString());    
-                
-                AnimalAd a = new AnimalAd(id,userId,speciesOfAnimal,title,description,date,dateOfAdd,lostOrFund);
-                System.out.println(a.userId.getEmail());
-                        
-                      
-                ads.add(a);
-                
-            }
-
-            return ads;
-        }
-        catch(Exception ex){
-            System.out.println(ex.getMessage());
-            return ads;
-        }
-        finally{
-            em.clear();
-            em.close();
-            emf.close();
-        }
-    } 
+        
         public static String update_ad(AnimalAd a){
         EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
         EntityManager em = emf.createEntityManager();
@@ -380,4 +337,100 @@ public class AnimalAd implements Serializable {
             emf.close();
         }              
        }
+        
+
+    public static List<AnimalAd> get_all_ads(){
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+        EntityManager em = emf.createEntityManager();
+        List<AnimalAd> ads = new ArrayList();
+        try{
+            StoredProcedureQuery spq = em.createStoredProcedureQuery("get_all_ads");
+            List<Object[]> result = spq.getResultList();
+
+
+            for (Object[] rekord : result) {
+            Integer id = Integer.parseInt(rekord[0].toString());
+            User userId = new User(Integer.parseInt(rekord[1].toString()));
+            Address addressId = new Address(Integer.parseInt(rekord[2].toString()));
+            String speciesOfAnimal = rekord[3].toString();
+            String title = rekord[4].toString();
+            String description = rekord[5].toString();
+            Date date = (Date) rekord[6];
+            Date dateOfAdd = (Date) rekord[7];
+            String lostOrFound = rekord[8].toString();
+            String county = rekord[9].toString();
+            String city = rekord[10].toString();
+            Integer zipCode = Integer.parseInt(rekord[11].toString());
+            String email = rekord[12].toString();
+            String username = rekord[13].toString();
+            
+
+
+            User user = new User(userId.getId(), null, null, email, username, null, null, null);
+            Address address = new Address(addressId.getId(), county, city, zipCode);
+            AnimalAd ad = new AnimalAd(id, user, address, speciesOfAnimal, title, description, date, dateOfAdd, lostOrFound);
+            ads.add(ad);
+            
+        }          
+            return ads;
+        }
+        
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return ads;
+        }
+        finally{
+            em.clear();
+            em.close();
+            emf.close();
+        }
+    } 
+    
+    public static List<AnimalAd> search_ads(String searched_word1, String searched_word2) {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory(Database.getPuName());
+    EntityManager em = emf.createEntityManager();
+    List<AnimalAd> ads = new ArrayList<>();
+
+    try {
+        StoredProcedureQuery spq = em.createStoredProcedureQuery("search_ads");
+        spq.registerStoredProcedureParameter("searched_word1", String.class, ParameterMode.IN);
+        spq.registerStoredProcedureParameter("searched_word2", String.class, ParameterMode.IN);
+        spq.setParameter("searched_word1", searched_word1);
+        spq.setParameter("searched_word2", searched_word2);
+        
+        List<Object[]> result = spq.getResultList();
+
+        for (Object[] record : result) {
+            Integer id = Integer.parseInt(record[0].toString());
+            User userId = new User(Integer.parseInt(record[1].toString()));
+            Address addressId = new Address(Integer.parseInt(record[2].toString()));
+            String speciesOfAnimal = record[3].toString() ;
+            String title = record[4].toString();
+            String description = record[5].toString();
+            Date date = (Date) record[6];
+            Date dateOfAdd = (Date) record[7];
+            String lostOrFound = record[8].toString();
+            String county = record[9].toString();
+            String city = record[10].toString();
+            Integer zipCode = Integer.parseInt(record[11].toString());
+            String email = record[12].toString();
+            String username = record[13].toString();
+
+            User user = new User(userId.getId(), null, null, email, username, null, null, null);
+            Address address = new Address(addressId.getId(), county, city, zipCode);
+            AnimalAd ad = new AnimalAd(id, user, address, speciesOfAnimal, title, description, date, dateOfAdd, lostOrFound);
+            ads.add(ad);
+        }
+
+        return ads;
+    } catch (Exception ex) {
+        System.out.println(ex.getMessage());
+        return ads;
+    } finally {
+        em.clear();
+        em.close();
+        emf.close();
+    }
 }
+}
+

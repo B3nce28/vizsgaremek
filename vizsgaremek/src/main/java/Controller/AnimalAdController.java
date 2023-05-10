@@ -71,18 +71,25 @@ public class AnimalAdController {
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
     
-    @GET
-    @Path("get_all_ads")
-    public Response get_all_ads(){
-    List<AnimalAd> result = AnimalAd.get_all_ads();
-    return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
-    }
-    
     @POST
     @Path("update_ad")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update_ad(AnimalAd ad){
         String result = AnimalAd.update_ad(ad);
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
+    }
+    @GET
+    @Path("get_all_ads")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response get_all_ads(){
+    List<AnimalAd> result = AnimalAd.get_all_ads();
+    return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
+    }
+    @POST
+    @Path("search_ads")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response search_ads(){
+    List<AnimalAd> result = AnimalAd.search_ads("searchedWord1", "searchedWord2");
+    return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
 }

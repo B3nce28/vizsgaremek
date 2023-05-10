@@ -80,6 +80,7 @@ public class AddressController {
     }
     @GET
     @Path("get_all_address")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response get_all_address(){
     List<Address> result = Address.get_all_address();
     return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
