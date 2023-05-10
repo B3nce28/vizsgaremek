@@ -5,6 +5,7 @@
 package Controller;
 
 import com.helix.vizsgaremek.AnimalAd;
+import com.helix.vizsgaremek.Words;
 import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -17,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 
 /**
  * REST Web Service
@@ -85,11 +87,17 @@ public class AnimalAdController {
     List<AnimalAd> result = AnimalAd.get_all_ads();
     return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
+    
+   
+    
     @POST
     @Path("search_ads")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response search_ads(){
-    List<AnimalAd> result = AnimalAd.search_ads("searchedWord1", "searchedWord2");
-    return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response search_ads(Words words) {
+    List<AnimalAd> result = AnimalAd.search_ads(words.getSearchedWord1(), words.getSearchedWord2());
+    return Response.status(Response.Status.OK).entity(result).build();
     }
+    
+    
 }
+

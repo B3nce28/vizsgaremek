@@ -392,14 +392,14 @@ public class AnimalAd implements Serializable {
     List<AnimalAd> ads = new ArrayList<>();
 
     try {
-        StoredProcedureQuery spq = em.createStoredProcedureQuery("search_ads");
+        StoredProcedureQuery spq = em.createStoredProcedureQuery("search_ad");
         spq.registerStoredProcedureParameter("searched_word1", String.class, ParameterMode.IN);
         spq.registerStoredProcedureParameter("searched_word2", String.class, ParameterMode.IN);
         spq.setParameter("searched_word1", searched_word1);
         spq.setParameter("searched_word2", searched_word2);
-        
+        System.out.println(searched_word1);
         List<Object[]> result = spq.getResultList();
-
+        
         for (Object[] record : result) {
             Integer id = Integer.parseInt(record[0].toString());
             User userId = new User(Integer.parseInt(record[1].toString()));
