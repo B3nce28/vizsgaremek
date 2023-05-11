@@ -6,6 +6,7 @@ package com.helix.vizsgaremek;
 
 import Configuration.Database;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +32,7 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -107,6 +108,20 @@ public class AnimalAd implements Serializable {
     private Address addressId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "adId")
     private Collection<Picture> pictureCollection;
+    
+    @Transient
+    @JsonInclude
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    
+    
 
     public AnimalAd() {
     }
@@ -243,21 +258,25 @@ public class AnimalAd implements Serializable {
             //Create SPQ and run it
             StoredProcedureQuery spq = em.createStoredProcedureQuery("create_new_ad");
             
-            spq.registerStoredProcedureParameter("user_id_in", Integer.class, ParameterMode.IN);
-            spq.registerStoredProcedureParameter("address_id_in", Integer.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("user_id_in", Integer.class, ParameterMode.IN);           
             spq.registerStoredProcedureParameter("species_of_animal_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("title_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("description_in", String.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("date_in", Date.class, ParameterMode.IN);
             spq.registerStoredProcedureParameter("lost_or_fund_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("county_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("city_in", String.class, ParameterMode.IN);
+            spq.registerStoredProcedureParameter("zip_code_in", Integer.class, ParameterMode.IN);
                            
-            spq.setParameter("user_id_in", a.getUserId().getId());
-            spq.setParameter("address_id_in", a.getAddressId().getId());
+            spq.setParameter("user_id_in", a.getUserId().getId());           
             spq.setParameter("species_of_animal_in", a.getSpeciesOfAnimal());
             spq.setParameter("title_in", a.getTitle());
             spq.setParameter("description_in", a.getDescription());
             spq.setParameter("date_in", a.getDate());
             spq.setParameter("lost_or_fund_in", a.getLostOrFund());
+            spq.setParameter("county_in", a.address.getCounty());
+            spq.setParameter("city_in", a.address.getCity());
+            spq.setParameter("zip_code_in", a.address.getZipCode());
             
             spq.execute();
             return "Új hírdetés sikeresen létre lett hozva!";

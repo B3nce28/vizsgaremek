@@ -61,7 +61,7 @@ public class PictureController {
         String result = Picture.add_picture(picture);
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
-    @DELETE
+    @POST
     @Path("delete_picture")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response delete_picture(Picture picture){

@@ -79,7 +79,7 @@ public class UserController {
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
     
-    @DELETE
+    @POST
     @Path("delete_user")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response delete_user(User user){
