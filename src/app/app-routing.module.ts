@@ -11,9 +11,9 @@ const routes: Routes = [
   {path:'',redirectTo:'login',pathMatch:'full'},
   {path: 'login' ,component:LoginComponent},
   {path: 'signup' ,component:SignupComponent},
-  {path: 'home' ,component:HomeComponent, },
-  {path: 'profil',component:ProfilComponent,  },
-  {path:'my-ads', component:MyAdsComponent, }
+  {path: 'home' ,component:HomeComponent,canActivate: [AuthGuard]},
+  {path: 'profil',component:ProfilComponent,  canActivate: [AuthGuard]},
+  {path:'my-ads', component:MyAdsComponent,canActivate: [AuthGuard] }
 ];
 
 @NgModule({

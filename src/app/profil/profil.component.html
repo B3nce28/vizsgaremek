@@ -1,9 +1,4 @@
-<nav>
-  <a routerLink="home">Home</a>
-  <a routerLink="/profil">Profile</a>
-  <a routerLink="/my-ads">My Ads</a>
-  <button routerLink="/login" class="btn btn-danger mx-2" >kijelentkezés</button>
-</nav>
+<app-menu></app-menu>
 
 <div class="centered">
   <mat-card class="example-card" [formGroup]="profileForm">
@@ -12,7 +7,7 @@
     </mat-card-header>
     <mat-card-content>
       <label for="exampleInputUsername1" class="form-label">Felhasználónév</label>
-      <input formControlName="username" type="text" class="form-control" id="exampleInputUsername1" aria-describedby="usernameHelp" [value]="profileForm.get('username')">
+      <input formControlName="username" type="text" class="form-control" id="exampleInputUsername1" aria-describedby="usernameHelp">
       <mat-divider></mat-divider>
       <label for="exampleInputEmail1" class="form-label">E-mail cím</label>
       <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="E-mail címed">
@@ -24,8 +19,12 @@
       <input formControlName="phoneNumber" type="text" class="form-control" id="exampleInputPhoneNumber1" placeholder="Telefonszám">
     </mat-card-content>
     <mat-card-actions>
-      <button type="submit" (click)="saveProfile()" mat-button>Módosítások mentése</button>
+      <button type="submit" (click)="updateUserData()" mat-button>Módosítások mentése</button>
       <button (click)="deleteProfile()" mat-button color="warn">Fiók törlése</button>
     </mat-card-actions>
   </mat-card>
 </div>
+
+<!-- {{ user |json}}
+{{ profileForm.value | json }} -->
+

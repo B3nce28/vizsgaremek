@@ -1,7 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators,FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoginService } from '../services/login.service';
 
 @Component({
@@ -11,45 +11,86 @@ import { LoginService } from '../services/login.service';
 })
 export class ProfilComponent implements OnInit {
   profileForm!: FormGroup;
+  user!: any;
+  addressForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder,  private router:Router, private userService: LoginService) { }
+  constructor(private formBuilder: FormBuilder,  private router:Router, private userService: LoginService, private http: HttpClient) {
+    this.user = JSON.parse(this.userService.getUserData());
+   }
 
   ngOnInit() {
     this.profileForm = this.formBuilder.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      phoneNumber: ['', Validators.pattern('[0-9]*')]
+      phoneNumber: ['', Validators.pattern('[0-9]*')],
+      id:[this.user.id],
     });
+    this.addressForm= this.formBuilder.group({
+      county:['',Validators.required],
+      city:['',Validators.required],
+      zipCode:['',Validators.required]
+    })
+    this.getUserData();
   }
 
-  saveProfile(): void {
-    if (this.profileForm.valid) {
-      console.log('Profile saved successfully!');
-      this.router.navigate(['/home']);
-    } else {
-      console.log('Profile form is invalid!');
+  updateUserData(): void {
+    this.http.post(`http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/update_user`,this.profileForm.value)
+    .subscribe((res) =>{
+      if (this.profileForm.valid) {
+        console.log('Profile saved successfully!');
+        this.router.navigate(['/home']);
+      } else {
+        console.log('Profile form is invalid!');
+      }
     }
+    );
+
   }
 
   deleteProfile(): void {
-    console.log('Profile deleted successfully!');
-    this.router.navigate(['/login']);
+    const id = this.user.id;
+    this.http.post(`http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/delete_user`,id)
+      .subscribe(
+        (response) => {
+          console.log('User deleted successfully!');
+        },
+        (error) => {
+          if(error.status == 200 && error.statusText == 'OK'){
+              this.router.navigate(['/login']);
+              localStorage.clear()
+          }
+          console.log('Error deleting user:', error);
+        }
+      );
   }
 
-  // getUserData() {
-  //   this.userService.getUser().subscribe(
-  //     user => {
-  //       this.user = user;
-  //       // az input mezőkbe betöltjük a felhasználó adatait
-  //       this.profileForm.setValue({
-  //         username: this.user.username,
-  //         email: this.user.email,
-  //         password: this.user.password,
-  //         phoneNumber: this.user.phoneNumber
-  //       });
-  //     },
-  //     error => console.log(error)
-  //   );
+
+  getUserData() {
+    this.profileForm.setValue({
+      id: this.user.id,
+      username: this.user.username,
+      email: this.user.email,
+      password: this.user.password,
+      phoneNumber: this.user.phoneNumber
+    });
+  }
+
+
+
+  // deleteAddress(){
+  //   this.http.post(`http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/Address/delete_address`)
+  //     .subscribe(
+  //       (response) => {
+  //         console.log('Az adatok törlése sikeres volt');
+  //       },
+  //       (error) => {
+  //         if(error.status == 200 && error.statusText == 'OK'){
+  //             localStorage.clear()
+  //         }
+  //         console.log('Hiba az adatok törlésében:', error);
+  //       }
+  //     );
   // }
+
 }

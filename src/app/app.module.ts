@@ -21,14 +21,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+// import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AddAdsComponent } from './add-ads/add-ads.component';
+import { AdvestComponent } from './advest/advest.component';
+import { MenuComponent } from './menu/menu.component';
+// import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,9 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     HomeComponent,
     ProfilComponent,
     MyAdsComponent,
+    AddAdsComponent,
+    AdvestComponent,
+    MenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,16 +60,15 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatDatepickerModule,
     MatNativeDateModule,
     MatRadioModule,
-    MatSelectModule,
     ReactiveFormsModule,
     HttpClientModule,
     MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
+    // MatPaginatorModule,
     MatSnackBarModule,
     MatCardModule,
     MatDividerModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    // MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
