@@ -11,13 +11,13 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
               <mat-label>Cím</mat-label>
-              <input matInput placeholder="Ex. Babaji" formControlName="title">
+              <input matInput placeholder="Cím" formControlName="title">
           </mat-form-field>
       </div>
       <div class="row">
           <mat-form-field appearance="outline">
               <mat-label>Leírás</mat-label>
-              <input matInput type="email" placeholder="Valami...." formControlName="description">
+              <input matInput type="email" placeholder="Ismertetés" formControlName="description">
           </mat-form-field>
           <mat-form-field appearance="outline">
               <mat-label>Eltűnés dátuma</mat-label>
@@ -26,10 +26,33 @@
               <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
+          <mat-radio-group aria-label="Select an option" formControlName="lostOrFund">
+            <mat-radio-button value="elveszett">Elveszett</mat-radio-button>
+            <mat-radio-button value="talált">Talált</mat-radio-button>
+          </mat-radio-group>
+      </div>
+       <div class="">
+        <mat-card class="example-card" [formGroup]="address">
+          <mat-card-header>
+            <mat-card-title>Cím megadása</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <label for="county" class="form-label">Megye</label>
+            <input formControlName="county" type="text" class="form-control" id="county" placeholder="pl: Baranya">
+            <mat-divider></mat-divider>
+            <label for="zipCode" class="form-label">Irányítószám</label>
+            <input formControlName="zipCode" type="text" class="form-control" id="zipCode"  placeholder="pl: 7232">
+            <mat-divider></mat-divider>
+            <label for="city" class="form-label">Város</label>
+            <input formControlName="city" type="text" class="form-control" id="city" placeholder="pl: Pécs">
+          </mat-card-content>
+        </mat-card>
       </div>
   </div>
   <div mat-dialog-actions class="action">
       <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
-      <button type="submit" [disabled]="adsForm.invalid" class="btn btn-primary">Hírdetés feladása</button>
+      <button type="submit" [disabled]="adsForm.invalid" routerLink="/my-ads" class="btn btn-primary">Hírdetés feladása</button>
   </div>
+
 </form>
+

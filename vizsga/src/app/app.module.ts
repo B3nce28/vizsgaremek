@@ -28,6 +28,9 @@ import {MatCardModule} from '@angular/material/card';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { AddAdsComponent } from './add-ads/add-ads.component';
+import { AdvestComponent } from './advest/advest.component';
+import { MenuComponent } from './menu/menu.component';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 // import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
@@ -39,6 +42,8 @@ import { AddAdsComponent } from './add-ads/add-ads.component';
     ProfilComponent,
     MyAdsComponent,
     AddAdsComponent,
+    AdvestComponent,
+    MenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,7 +69,8 @@ import { AddAdsComponent } from './add-ads/add-ads.component';
     MatCardModule,
     MatDividerModule,
     MatProgressBarModule,
-    // MatSelectModule
+    // MatSelectModule,
+    Ng2SearchPipeModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

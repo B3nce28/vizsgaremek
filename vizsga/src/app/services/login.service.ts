@@ -13,12 +13,8 @@ export class LoginService {
 
   getUserData(): any{
     return localStorage.getItem('token');
-    // this.http.get(`${this.apiUrl}/current-user`);
   }
 
-  updateUserData():any {
-    //return localStorage.setItem();
-  }
 
 
 }

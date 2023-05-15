@@ -1,39 +1,18 @@
-nav {
-  display: flex;
-  align-items: left;
-  background-color: #f8f8f8;
-  padding: 10px;
-}
-
-nav a {
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
-  margin-right: 20px;
-}
-
-nav button {
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  background-color: #dc3545;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-nav button:hover {
-  background-color: #c82333;
-}
-
 .example-card {
   width: 750px;
+  display: flex;
+  flex-direction: column;
 }
+
 .centered {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 200vh;
+  flex-direction: column;
+  align-items: center;
+  background: #e7e6e1;
+}
+
+.btn {
+  margin-left: auto;
 }
 
 .mat-card-header {
@@ -52,22 +31,16 @@ nav button:hover {
   margin-left: auto;
 }
 
-.mat-card-header {
-  display: flex;
-  align-items: flex-start;
-}
-
 button[mat-button][type=submit] {
   margin-right: auto;
 }
 
-.example-card {
+.centeredCrad {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  gap: 20px;
 }
 
-.mat-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+

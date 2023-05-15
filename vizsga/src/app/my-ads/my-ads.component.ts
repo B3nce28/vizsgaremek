@@ -11,14 +11,18 @@ import { AddAdsComponent } from '../add-ads/add-ads.component';
   templateUrl: './my-ads.component.html',
   styleUrls: ['./my-ads.component.css']
 })
-export class MyAdsComponent {
+export class MyAdsComponent  {
 
   adsForm!: FormGroup;
+  hirdetes: any[]=[];
+  user: any;
 
-  constructor(private formBuilder : FormBuilder, private http: HttpClient, private router:Router, private _dialog : MatDialog){}
+  constructor(private formBuilder : FormBuilder, private http: HttpClient, private router:Router, private _dialog : MatDialog){
+    this.user = JSON.parse(localStorage.getItem('token')!)
+  }
 
-  ngOninit(){
-
+  ngOnInit(){
+    this.loadMyAds()
   }
   onSubmit(): void{
 
@@ -28,10 +32,26 @@ export class MyAdsComponent {
     dialogRef.afterClosed().subscribe({
       next: (val) => {
         if (val) {
-          //this.getEmployeeList();
         }
       },
     });
   }
 
+  loadMyAds(){
+    this.http.get<any>("http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/AnimalAd/get_all_ads")
+    .subscribe(res=>{
+      console.log(res)
+      this.filterAds(res)
+    })
+  }
+
+  filterAds(ads:any[]){
+    console.log("A bejelentkezett user id",this.user.id)
+    ads.forEach(ad => {
+      console.log("hírdetés user id",ad.userId.id)
+      if(this.user.id == ad.userId.id){
+        this.hirdetes.push(ad)
+      }
+    });
+  }
 }

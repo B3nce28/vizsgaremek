@@ -12,37 +12,53 @@ import { LoginService } from '../services/login.service';
 export class ProfilComponent implements OnInit {
   profileForm!: FormGroup;
   user!: any;
+  addressForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder,  private router:Router, private userService: LoginService, private http: HttpClient) { }
+  constructor(private formBuilder: FormBuilder,  private router:Router, private userService: LoginService, private http: HttpClient) {
+    this.user = JSON.parse(this.userService.getUserData());
+   }
 
   ngOnInit() {
     this.profileForm = this.formBuilder.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      phoneNumber: ['', Validators.pattern('[0-9]*')]
+      phoneNumber: ['', Validators.pattern('[0-9]*')],
+      id:[this.user.id],
     });
+    this.addressForm= this.formBuilder.group({
+      county:['',Validators.required],
+      city:['',Validators.required],
+      zipCode:['',Validators.required]
+    })
     this.getUserData();
   }
 
   updateUserData(): void {
-    if (this.profileForm.valid) {
-      console.log('Profile saved successfully!');
-      this.router.navigate(['/home']);
-    } else {
-      console.log('Profile form is invalid!');
+    this.http.post(`http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/update_user`,this.profileForm.value)
+    .subscribe((response) => {
+    },
+    (error) => {
+      if(error.status == 200 && error.statusText == 'OK'){
+        alert("A módosítások sikerese voltak")
+      }
     }
+  );
+
   }
 
   deleteProfile(): void {
     const id = this.user.id;
-    this.http.delete(`http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/delete_user?id=${id}`)
+    this.http.post(`http://127.0.0.1:8080/vizsgaremek-1.0-SNAPSHOT/webresources/User/delete_user`,id)
       .subscribe(
         (response) => {
           console.log('User deleted successfully!');
-          this.router.navigate(['/login']);
         },
         (error) => {
+          if(error.status == 200 && error.statusText == 'OK'){
+              this.router.navigate(['/login']);
+              localStorage.clear()
+          }
           console.log('Error deleting user:', error);
         }
       );
@@ -50,16 +66,13 @@ export class ProfilComponent implements OnInit {
 
 
   getUserData() {
-    let user = JSON.parse(this.userService.getUserData());
-    console.log(user);
-    this.user = user;
     this.profileForm.setValue({
-      username: user.username,
-      email: user.email,
-      password: user.password,
-      phoneNumber: user.phoneNumber
+      id: this.user.id,
+      username: this.user.username,
+      email: this.user.email,
+      password: this.user.password,
+      phoneNumber: this.user.phoneNumber
     });
   }
-
 
 }

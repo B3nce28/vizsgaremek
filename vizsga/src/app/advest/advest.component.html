@@ -1,0 +1,21 @@
+<div class="container">
+  <mat-card class="example-card">
+    <mat-card-header>
+      <mat-card-title>{{ad.title}}</mat-card-title>
+      <mat-card-title>{{ad.lostOrFund}}</mat-card-title>
+      <mat-card-title>{{ad.speciesOfAnimal}}</mat-card-title>
+      <img mat-card-image src="">
+    </mat-card-header>
+    <mat-card-content>
+      <p>Felhasználó: {{ad.userId.username}}</p>
+      <p>Elérhetőség: {{ad.userId.email}}</p>
+      <p>{{ad.description}}</p>
+      <p>Eltűnés dátuma: {{ad.date}}</p>
+      <p>Feltöltés dátuma: {{ad.dateOfAdd}}</p>
+      <mat-card-subtitle>{{ad.addressId.county+' '+ad.addressId.zipCode+' '+ad.addressId.city}}</mat-card-subtitle>
+    </mat-card-content>
+    <mat-card-actions *ngIf="userId == ad.userId.id">
+      <button (click)="deletePost()" mat-button color="warn">Delete</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
