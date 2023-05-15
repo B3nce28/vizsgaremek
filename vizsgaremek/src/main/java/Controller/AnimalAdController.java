@@ -65,7 +65,7 @@ public class AnimalAdController {
         return Response.status(Response.Status.OK).entity(result).type(MediaType.APPLICATION_JSON).build();
     }
     
-    @DELETE
+    @POST
     @Path("delete_ad")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response delete_ad(AnimalAd ad){
