@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Máj 11. 16:25
--- Kiszolgáló verziója: 10.4.24-MariaDB
--- PHP verzió: 8.1.6
+-- Létrehozás ideje: 2023. Máj 15. 13:52
+-- Kiszolgáló verziója: 10.4.27-MariaDB
+-- PHP verzió: 8.1.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -92,7 +92,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_ad` (IN `id_in` INT(11), IN 
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_address` (IN `id_in` INT, IN `county_in` VARCHAR(200), IN `city_in` VARCHAR(200), IN `zip_code_in` INT)   UPDATE address SET address.county = county_in, address.city = city_in, address.zip_code = zip_code_in WHERE address.id = id_in$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_user` (IN `id_in` INT(11), IN `email_in` VARCHAR(200), IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), IN `phone_number_in` VARCHAR(200))   UPDATE user SET user.email = email_in, user.username=username_in, user.password = password_in, user.phone_number = phone_number_in WHERE user.id = id_in$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_user` (IN `id_in` INT(11), IN `email_in` VARCHAR(200), IN `username_in` VARCHAR(200), IN `password_in` VARCHAR(200), IN `phone_number_in` VARCHAR(200))   UPDATE user SET user.email = email_in, user.username=username_in, user.password = SHA1(password_in), user.phone_number = phone_number_in WHERE user.id = id_in$$
 
 DELIMITER ;
 
@@ -104,8 +104,8 @@ DELIMITER ;
 
 CREATE TABLE `address` (
   `id` int(11) NOT NULL,
-  `county` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `city` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
+  `county` varchar(200) NOT NULL,
+  `city` varchar(200) NOT NULL,
   `zip_code` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
@@ -114,12 +114,13 @@ CREATE TABLE `address` (
 --
 
 INSERT INTO `address` (`id`, `county`, `city`, `zip_code`) VALUES
-(1, 'Baranya', 'Pécs', 7622),
-(5, 'Baranya', 'Nagyharsány', 7822),
-(7, 'Baranya', 'Mohács', 7700),
-(8, 'Baranya', 'Kisharsány', 7800),
-(9, 'Baranya', 'Mohács', 7700),
-(10, 'Baranya', 'Mohács', 7700);
+(19, 'Baranya', 'Pécs', 7630),
+(20, 'Baranya', 'Mohács', 7700),
+(21, 'Baranya', 'Nagyharsány', 7822),
+(22, 'Baranya', 'Kistapolca', 7823),
+(23, 'Borsod-Abaúj-Zemplén', 'Miskolc', 3500),
+(24, 'Pest', 'Budapest', 1011),
+(25, 'Pest', 'Budapest', 1014);
 
 -- --------------------------------------------------------
 
@@ -131,12 +132,12 @@ CREATE TABLE `animal_ad` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `address_id` int(11) NOT NULL,
-  `species_of_animal` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `title` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8_hungarian_ci NOT NULL,
+  `species_of_animal` varchar(200) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `description` varchar(2000) NOT NULL,
   `date` date NOT NULL,
   `date_of_add` date NOT NULL,
-  `lost_or_fund` varchar(200) COLLATE utf8_hungarian_ci NOT NULL
+  `lost_or_fund` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
@@ -144,30 +145,13 @@ CREATE TABLE `animal_ad` (
 --
 
 INSERT INTO `animal_ad` (`id`, `user_id`, `address_id`, `species_of_animal`, `title`, `description`, `date`, `date_of_add`, `lost_or_fund`) VALUES
-(7, 3, 1, 'ló', 'Talált ló az utcán', 'A nyílt utcán találtam egy barna lovat.', '2023-03-28', '2023-03-28', 'talált'),
-(8, 3, 1, 'ló', 'Talált Kanca', 'Találtam egy fehér kancát a járdán.', '2023-03-28', '2023-03-29', 'talált'),
-(9, 11, 1, 'macska', 'Talált macska', 'Fajtiszta macskát találtam.', '2023-04-24', '2023-04-26', 'talált'),
-(10, 11, 1, 'papagáj', 'Elveszett papagáj', 'Elveszett a papagájom tegnap este.', '2023-05-03', '2023-05-04', 'elveszett'),
-(11, 11, 1, 'macska', 'Talált macska', 'Talált macska, egészséges.', '2023-05-01', '2023-05-04', 'talált'),
-(12, 11, 7, 'macska', 'Elveszett Lujza macska', 'Elveszett lujza nevü cicám.', '2023-05-01', '2023-05-07', 'elveszett'),
-(13, 10, 5, 'kutya', 'Elveszet kiskutya.', 'Elveszett Pötyi nevü kiskutyám.', '2023-05-06', '2023-05-07', 'elveszett'),
-(14, 3, 9, 'kutya', 'Elveszett a kutyám nagyon', 'A kutyám, Joe aki egy labrador elveszett Szészcheny utcában. Nagyon hiányzik. Nagyon szereti a tejet. Kérlek, segítsetek aaaaa. ', '2023-05-03', '2023-05-11', 'elveszett'),
-(15, 11, 10, 'macska', 'Talált macska', 'Talált macska, egészséges.', '2023-05-01', '2023-05-11', 'talált');
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `password_replacement`
---
-
-CREATE TABLE `password_replacement` (
-  `id` int(11) NOT NULL,
-  `email` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `token` varchar(256) COLLATE utf8_hungarian_ci NOT NULL,
-  `token_expire` datetime NOT NULL,
-  `used` tinyint(1) NOT NULL,
-  `is_deleted` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+(24, 1, 19, 'Kutya', 'Bandi kutya eltűnt', '2 éves kutyám Bandi pár napja elszökött miközben elmentünk sétálni. Egy fekete, kan, kevert kutyus.', '2023-05-11', '2023-05-15', 'elveszett'),
+(25, 15, 20, 'Macska', 'Talált kiscica', 'Találtám egy tarka kiscicát a házam előtt, egészséges.', '2023-05-01', '2023-05-15', 'talált'),
+(26, 15, 21, 'Macska', 'Eveszett a cicám', 'Eveszett a fajtiszta kandúr perzsa macskám, Fáraó. Szürke szinű és nagyon barátságos.', '2023-05-15', '2023-05-15', 'elveszett'),
+(27, 16, 22, 'Tehén', 'Eveszett a tehenem borjával', 'Eltűnt tegnap este milka nevű tehenem kis borjával együtt. Neve ellenében nem lila színű hanem fekete fehér', '2023-05-15', '2023-05-15', 'elveszett'),
+(28, 17, 23, 'Kutya', 'Sérült tacskó', 'Találtam egy fekete kis tacskót. Van rajta egy fehér nyakörv, de azonosító nem található rajta. A bal hátsó lábán egy kisebb vágott sebb van', '2023-05-13', '2023-05-15', 'talált'),
+(29, 19, 24, 'Hörcsög', 'Öreg hörcsög elszökött', 'A már több éves hörcsögöm kimászott a véletlen nyitva hagyott ajtón. Barna színű, viszonylag nagy, de nagyon lomha teremtmény. Ha valaki látja kérem írjon.', '2023-05-14', '2023-05-15', 'elveszett'),
+(30, 20, 25, 'Egér', 'Elveszett egérke', 'Elveszett az óriási kisegér. Hatalmas kisegér lába van, hatalmas kisegér arca van, hatalmas kisegér mája. Mármint óriási kisegér értelmezési tartományban hatalmas, tehát egy közepes gnú még mindig sokkal nagyobb.', '2023-05-14', '2023-05-15', 'elveszett');
 
 -- --------------------------------------------------------
 
@@ -178,7 +162,7 @@ CREATE TABLE `password_replacement` (
 CREATE TABLE `picture` (
   `id` int(11) NOT NULL,
   `ad_id` int(11) NOT NULL,
-  `picture_url` varchar(200) COLLATE utf8_hungarian_ci NOT NULL
+  `picture_url` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 -- --------------------------------------------------------
@@ -189,12 +173,12 @@ CREATE TABLE `picture` (
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
-  `first_name` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `last_name` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `email` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `username` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `password` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
-  `phone_number` varchar(20) COLLATE utf8_hungarian_ci NOT NULL,
+  `first_name` varchar(200) NOT NULL,
+  `last_name` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `username` varchar(200) NOT NULL,
+  `password` varchar(200) NOT NULL,
+  `phone_number` varchar(20) NOT NULL,
   `date_of_registration` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
@@ -203,12 +187,14 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `username`, `password`, `phone_number`, `date_of_registration`) VALUES
-(1, 'Tivadar', 'Teszt', 'tesztes@freemail.hu', 'teszttivi001', 'tivadar01', '+36 30 222 1111', '2023-02-02'),
-(3, 'Joe', 'Mama', 'Mama', 'joe111', '9ee036287b4cfbcfa3b5bbfcf92d46eb5e75df96', '+36 70 111 0100 ', '2023-03-09'),
-(4, 'Béla', 'Kovács', 'Kovács', 'bela1', '2f712f2b4c17b108f5961465d36a19c98301c173', '123456789', '2023-03-10'),
-(10, 'Anna', 'Példa', 'anna10@gmail.com', 'annapelda1', 'd6a9450dc08555d6ecfaf7162e5267f401e6dd9a', '+36 70 111 01111 ', '2023-04-23'),
-(11, 'Alma', 'Alma', 'alma1@gmail.com', 'alma1', '89afb985f6b6d698a67d4531101b2c2daf0562a5', '+36 70 100 01111 ', '2023-04-26'),
-(12, 'Körte', 'Körte', 'körte1@gmail.com', 'körte1', '0346d58200fc83420b9b3ced5a64c72fe703ecb5', '+36 30 222 1222', '2023-04-26');
+(1, 'Tivadar', 'Teszt', 'tesztes@freemail.hu', 'Ttivadar5', '71931ce13d6cc32d0c82e16ab8c19eb196475801', '+36 70 111 0100 ', '2023-05-15'),
+(15, 'Péter', 'Próba', 'petike@gmail.com', 'Petivagyok20', '0dbe5ab58ca87a4bcbfe7be2918ecdf1b22836b9', '+36 30 111 0100 ', '2023-05-15'),
+(16, 'Sándor', 'Kiss', 'sanyika70@gmail.com', 'Smintsándor', 'aca0365afa91b0d4ce66434f863ee8045f8c2789', '+36 30 254 0100 ', '2023-05-15'),
+(17, 'László', 'Kovács', 'kovácslaci05@gmail.com', 'lacika', '68b7a10b7500b4c41b5a35716daaa89a10c301e7', '+36 20 254 0100 ', '2023-05-15'),
+(18, 'Judit', 'Nagy', 'jucuska@citromail.hu', 'jutka_néni', '4a752229d915f8c2c8f4d689d8efec5d1f13276c', '+36 20 254 3480 ', '2023-05-15'),
+(19, 'Elek', 'Vicc', 'vicces@gmail.com', 'megviccellek', 'edb8411b326bfe8f3fdc894db3ec4062b937b3ef', '+36 30 554 3420 ', '2023-05-15'),
+(20, 'Pál', 'Bekre', 'palivagyok@gmail.com', 'pali8', '695db044a416f8b1308701f3db8cd7015b605568', '+36 70 954 3420 ', '2023-05-15'),
+(21, 'Márta', 'Szabó', 'mártika@gmail.com', 'mártuska', '355c9248fb6e18bd382f96e23ae076a24f7dc0c6', '+36 20 254 3720 ', '2023-05-15');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -227,12 +213,6 @@ ALTER TABLE `animal_ad`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `address_id` (`address_id`);
-
---
--- A tábla indexei `password_replacement`
---
-ALTER TABLE `password_replacement`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- A tábla indexei `picture`
@@ -255,19 +235,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT a táblához `address`
 --
 ALTER TABLE `address`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT a táblához `animal_ad`
 --
 ALTER TABLE `animal_ad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- AUTO_INCREMENT a táblához `password_replacement`
---
-ALTER TABLE `password_replacement`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT a táblához `picture`
@@ -279,7 +253,7 @@ ALTER TABLE `picture`
 -- AUTO_INCREMENT a táblához `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Megkötések a kiírt táblákhoz
