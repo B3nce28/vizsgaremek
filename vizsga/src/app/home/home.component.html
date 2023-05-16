@@ -1,12 +1,19 @@
 <app-menu></app-menu>
 
+<div class="search">
+  <input type="text" id="inputAnimal">
+  <input type="text"  id="inputCity">
+  <button (click)="searchAd()">keresés</button>
+</div>
+
 <div class="post-card">
-  <div class="post-card-content">
+  <div class="post-card-content" id="cardContent">
       <div *ngFor="let ad of hirdetes">
         <app-advest [ad]="ad"></app-advest>
     </div>
   </div>
 </div>
+
 
 <!-- <div class="search-container">
   <span>Keresés:</span>
